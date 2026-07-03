@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+
+# Java / Maven
+target/
+**/target/
+
+# Generated Stubborn / SCIP artifacts
+index.scip
+**/index.scip
+*.db
+metadata/
+**/metadata/
+!**/metadata/
+**/metadata/*
+!**/metadata/expected-context-types.txt
+!**/metadata/expected-context-types-vet-controller.txt
+!**/metadata/expected-context-types-controller.txt
+!**/metadata/expected-context-types-pay-order.txt
+
+# External clones
+upstream/
+**/upstream/
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp

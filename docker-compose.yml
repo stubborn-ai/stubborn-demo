@@ -1,0 +1,59 @@
+services:
+  # Build once: docker compose build
+  toolchain:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        SCIP_JAVA_VERSION: "0.12.3"
+    image: stubborn-demo:e2e
+
+  e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash", "/usr/local/bin/run-demo-e2e"]
+    working_dir: /demo
+    volumes:
+      - ./demo-spring:/demo
+
+  merge-e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash", "/usr/local/bin/run-merge-e2e"]
+    working_dir: /demo
+    volumes:
+      - ./demo-spring:/demo
+
+  petclinic-e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash", "/usr/local/bin/run-petclinic-e2e"]
+    volumes:
+      - .:/opt/stubborn-demo
+    environment:
+      PETCLINIC_ROOT: /petclinic
+
+  dukesbank-e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash", "/usr/local/bin/run-dukesbank-e2e"]
+    volumes:
+      - .:/opt/stubborn-demo
+      - ../../dukesbank/src/j2eetutorial14/examples/bank:/bank:ro
+    environment:
+      BANK_ROOT: /bank
+      EXAMPLE_ROOT: /opt/stubborn-demo/dukesbank
+
+  shell:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash"]
+    stdin_open: true
+    tty: true
+    working_dir: /opt/stubborn-demo
+    volumes:
+      - .:/opt/stubborn-demo
+      - ./demo-spring:/demo
+
+  cli:
+    image: stubborn-demo:e2e
+    entrypoint: ["stubborn"]
+    working_dir: /workspace
+    volumes:
+      - .:/opt/stubborn-demo
+      - ./demo-spring:/demo

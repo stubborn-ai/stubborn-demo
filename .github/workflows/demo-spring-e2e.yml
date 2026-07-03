@@ -1,0 +1,34 @@
+name: Demo Spring E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  demo-spring-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build toolchain image
+        run: docker compose build toolchain
+
+      - name: Run demo-spring E2E
+        run: docker compose run --rm e2e
+
+      - name: Run demo-spring merge E2E
+        run: docker compose run --rm merge-e2e
+
+      - name: Upload demo artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-spring-e2e
+          path: |
+            demo-spring/metadata/symbols.db
+            demo-spring/metadata/order-service.stub.java
+          if-no-files-found: ignore
