@@ -25,6 +25,9 @@ jobs:
       - name: Run demo-spring merge E2E
         run: docker compose run --rm merge-e2e
 
+      - name: Run multi-repo workspace E2E
+        run: docker compose run --rm multi-repo-e2e
+
       - name: Upload demo artifacts
         if: always()
         uses: actions/upload-artifact@v4

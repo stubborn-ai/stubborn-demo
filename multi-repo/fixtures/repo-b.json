@@ -1,0 +1,35 @@
+{
+  "language": "java",
+  "project_root": "repo-b",
+  "documents": [
+    {
+      "relative_path": "src/main/java/com/example/lib/Service.java",
+      "symbols": [
+        {
+          "stable_id": "semanticdb maven com/example/lib/Service#",
+          "display_name": "Service",
+          "kind": "class",
+          "signature": "public class Service"
+        }
+      ],
+      "edges": [
+        {
+          "from": "semanticdb maven com/example/lib/Service#",
+          "to": "semanticdb maven com/example/lib/Helper#",
+          "edge_kind": "type"
+        }
+      ]
+    },
+    {
+      "relative_path": "src/main/java/com/example/lib/Helper.java",
+      "symbols": [
+        {
+          "stable_id": "semanticdb maven com/example/lib/Helper#",
+          "display_name": "Helper",
+          "kind": "class",
+          "signature": "public class Helper"
+        }
+      ]
+    }
+  ]
+}

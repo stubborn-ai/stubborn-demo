@@ -1,0 +1,37 @@
+{
+  "language": "java",
+  "project_root": "repo-a",
+  "documents": [
+    {
+      "relative_path": "src/main/java/com/example/app/Controller.java",
+      "symbols": [
+        {
+          "stable_id": "semanticdb maven com/example/app/Controller#",
+          "display_name": "Controller",
+          "kind": "class",
+          "signature": "public class Controller"
+        },
+        {
+          "stable_id": "semanticdb maven com/example/app/Controller#handle().",
+          "display_name": "handle",
+          "kind": "method",
+          "signature": "public void handle(Service service)"
+        },
+        {
+          "stable_id": "semanticdb maven com/example/lib/Service#",
+          "display_name": "Service",
+          "kind": "class",
+          "signature": "public class Service",
+          "relative_path": null
+        }
+      ],
+      "edges": [
+        {
+          "from": "semanticdb maven com/example/app/Controller#handle().",
+          "to": "semanticdb maven com/example/lib/Service#",
+          "edge_kind": "reference"
+        }
+      ]
+    }
+  ]
+}
