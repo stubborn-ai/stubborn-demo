@@ -1,4 +1,4 @@
-"""Verify multi-repo workspace graph composition through public CLI commands."""
+"""Verify multi-repo workspace graph composition through CLI and graph API."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "multi-repo" / "fixtures"
 TARGET = "semanticdb maven com/example/app/Controller#handle()."
+SERVICE_TARGET = "semanticdb maven com/example/lib/Service#"
 DEFAULT_STUBBORN_CMD = [sys.executable, "-c", "from stubborn.cli import app; app()"]
 
 
@@ -30,6 +31,26 @@ def run(*args: str) -> str:
         stderr=subprocess.STDOUT,
     )
     return completed.stdout
+
+
+def graph_names(db_path: Path, target: str) -> set[str]:
+    script = """
+from stubborn.config import ContextBudget
+from stubborn.graph.prune import prune_context
+import sys
+
+graph = prune_context(
+    sys.argv[1],
+    sys.argv[2],
+    workspace="acme",
+    budget=ContextBudget(call_closure_depth=2, max_symbols=20),
+)
+for symbol in graph.symbols:
+    if symbol.display_name:
+        print(symbol.display_name)
+"""
+    output = run(sys.executable, "-c", script, str(db_path), target)
+    return {line.strip() for line in output.splitlines() if line.strip()}
 
 
 def main() -> None:
@@ -92,6 +113,11 @@ def main() -> None:
     for expected in ("Controller", "Service", "Helper"):
         if expected not in composed:
             sys.exit(f"workspace context missing {expected}")
+
+    reverse_names = graph_names(workspace_db, SERVICE_TARGET)
+    for expected in ("handle", "Service", "Helper"):
+        if expected not in reverse_names:
+            sys.exit(f"reverse workspace context missing {expected}")
 
     print("multi-repo workspace validation passed")
 
