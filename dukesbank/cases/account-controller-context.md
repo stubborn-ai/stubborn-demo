@@ -19,7 +19,7 @@ github/
 ## Command
 
 ```bash
-# From bank module (host or Docker — see scripts/run-e2e.ps1)
+# From bank module (host or Docker — see scripts/run-e2e.sh)
 cd dukesbank/src/j2eetutorial14/examples/bank
 mvn -q -DskipTests package
 scip-java index
@@ -71,7 +71,7 @@ Types in the pruned graph should include:
 
 ## Baseline KPI
 
-Run `docker compose run --rm dukesbank-e2e` or `scripts/run-e2e.ps1`, then read `metrics` output.
+Run `docker compose run --rm dukesbank-e2e` or `scripts/run-e2e.sh`, then read `metrics` output.
 
 Target: **≥70%** token savings vs full `src/` tree (legacy EJB module is larger than demo-spring).
 
