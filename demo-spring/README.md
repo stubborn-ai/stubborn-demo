@@ -118,7 +118,7 @@ Use the E2E script to resolve `OrderService` automatically from the SQLite index
 
 With the **stubborn-demo repo root** open as the Cursor workspace:
 
-1. Install: `pip install stubborn-mcp` (and `stubborn-stub` for indexing)
+1. Install: `pip install stubborn-stub stubborn-mcp`
 2. Ensure `metadata/symbols.db` exists (`./scripts/run-e2e.ps1` or index step above)
 3. Configure Cursor MCP with `command: stubborn-mcp` and `STUBBORN_DB` pointing at `demo-spring/metadata/symbols.db`
 4. **Cursor Settings → MCP** → enable `stubborn` (green) → Reload if needed
@@ -131,9 +131,10 @@ Smoke-test without Cursor:
 
 Agent workflow:
 
-1. `list_symbols` with `query: "OrderService"`
-2. `get_context` with the returned `stable_id`
-3. `metrics` with `sources: demo-spring/src/main/java`
+1. `workspace_info` with `workspace: "default"` if you want to confirm the current run kind
+2. `list_symbols` with `query: "OrderService"`
+3. `get_context` with the returned `stable_id`
+4. `metrics` with `sources: demo-spring/src/main/java`
 
 See [stubborn-mcp docs](https://github.com/stubborn-ai/stubborn-mcp/blob/main/docs/MCP.md).
 

@@ -4,11 +4,11 @@
 
 Validate reverse traversal across a microservice contract boundary.
 
-The pressure-test story is an Owner identity change. A real migration would start near `Owner#id`; this first demo targets `OwnerResource` because it is the stable provider endpoint symbol that can be resolved across upstream versions while still exercising the same boundary:
+The pressure-test story is an Owner identity change. A real migration would start near `Owner#id`; this first demo targets the explicit contract endpoint symbol because it is the stable provider endpoint that can be resolved across upstream versions while still exercising the same boundary:
 
 ```text
-OwnerResource
-  <-> GET http://customers-service/owners/{ownerId}
+openapi customers-service:v1 GET /owners/{ownerId}
+  <-> OwnerResource
   <-> CustomersServiceClient
   <-> ApiGatewayController
 ```
@@ -23,6 +23,7 @@ docker compose run --rm petclinic-ms-e2e
 
 With declared contract evidence written, reverse context for the owner provider side should include:
 
+- `openapi customers-service:v1 GET /owners/{ownerId}`
 - `OwnerResource`
 - `CustomersServiceClient`
 - `ApiGatewayController`

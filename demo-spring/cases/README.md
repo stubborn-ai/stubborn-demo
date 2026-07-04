@@ -9,6 +9,10 @@ Add a new case by creating a markdown file here and (optionally) a script snippe
 | [controller-context](controller-context.md) | Active | `OrderController` | Web layer → service dependencies |
 | [pay-flow-context](pay-flow-context.md) | Active | `OrderService#payOrder` | Method-level narrow context |
 
+## MCP smoke
+
+`../scripts/mcp-smoke.ps1` is the quick check for `workspace_info`, `list_symbols`, and `get_context` against the demo-spring workspace.
+
 ## Case template
 
 ```markdown

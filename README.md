@@ -10,10 +10,10 @@ still exercising the public CLI/API contracts.
 
 | Demo | Purpose |
 |------|---------|
-| [`demo-spring`](demo-spring/) | Small Spring Boot app for fast SCIP -> SQLite -> context validation |
+| [`demo-spring`](demo-spring/) | Small Spring Boot app for fast SCIP -> SQLite -> context validation and MCP smoke |
 | [`multi-repo`](multi-repo/) | Workspace graph validation for source-available internal repos |
 | [`spring-petclinic`](spring-petclinic/) | Scale-up validation against a pinned upstream Spring PetClinic |
-| [`spring-petclinic-microservices`](spring-petclinic-microservices/) | Multi-service workspace validation with explicit HTTP contract bridge |
+| [`spring-petclinic-microservices`](spring-petclinic-microservices/) | Multi-service workspace validation with explicit HTTP contract evidence |
 | [`dukesbank`](dukesbank/) | Legacy Java EE migration-oriented validation |
 | [`migration-bridge`](migration-bridge/) | Minimal consumer sketch for migration workflows |
 
@@ -44,7 +44,7 @@ Host runs require JDK 21+, Maven, `scip-java`, and Stubborn on `PATH`.
 
 - `stubborn` is the headless core: ingest, store, prune, weave, API, CLI.
 - `stubborn-watch` is dev-loop orchestration: watch, debounce, external indexer, merge.
-- `stubborn-mcp` is the agent/MCP surface over a prepared `symbols.db`.
+- `stubborn-mcp` is the source-neutral agent/MCP surface over a prepared `symbols.db`.
 - `stubborn-demo` owns runnable demos and black-box validation projects.
 
 ## Validation Scope
@@ -52,7 +52,8 @@ Host runs require JDK 21+, Maven, `scip-java`, and Stubborn on `PATH`.
 The demos prove behavior through public entrypoints:
 
 ```text
-Java source -> scip-java -> stubborn index/merge -> symbols.db -> context/list_symbols/MCP
+Java source -> scip-java -> stubborn index/merge -> symbols.db -> context/list_symbols/list_contracts/MCP
+OpenAPI/manifest -> stubborn index-openapi/index-contract -> contract tables -> list_contracts/context
 ```
 
 Generated artifacts such as `index.scip`, `metadata/`, Maven `target/`, and

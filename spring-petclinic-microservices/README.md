@@ -15,7 +15,7 @@ Supporting services such as config server, discovery server, genAI, tracing, adm
 
 Stage 1 proves that Stubborn can compose independently indexed service directories into one workspace latest view.
 
-Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The demo uses `stubborn index-contract` to write [`contracts/http.yml`](contracts/http.yml) into Stubborn schema v4 contract tables as `declared` evidence.
+Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The demo uses `stubborn index-contract` to write [`contracts/http.yml`](contracts/http.yml) into Stubborn schema v4 contract tables as `declared` evidence, and can browse the resulting `openapi ...` endpoint stable IDs with `stubborn list-contracts`.
 
 ## Quick Start
 
@@ -48,11 +48,11 @@ These are gitignored:
 
 | Case | Target | Doc |
 |------|--------|-----|
-| visit-to-customer | `CustomersServiceClient` / `OwnerResource` contract bridge | [cases/visit-to-customer-context.md](cases/visit-to-customer-context.md) |
-| owner-impact-radius | `OwnerResource` reverse traversal through contracts | [cases/owner-id-impact-radius.md](cases/owner-id-impact-radius.md) |
+| visit-to-customer | `openapi customers-service:v1 GET /owners/{ownerId}` endpoint / `CustomersServiceClient` consumer | [cases/visit-to-customer-context.md](cases/visit-to-customer-context.md) |
+| owner-impact-radius | `openapi customers-service:v1 GET /owners/{ownerId}` reverse traversal | [cases/owner-id-impact-radius.md](cases/owner-id-impact-radius.md) |
 
 ## Boundary
 
 This demo should not claim that SCIP alone resolves HTTP, WebClient, Feign, or gateway route semantics. The honest claim is narrower and stronger: Stubborn can compose deterministic source graphs across service boundaries when service contracts are represented as explicit graph facts.
 
-The `petclinic-contracts` source is stored as first-class contract evidence, not as SCIP symbols or ordinary `reference` edges. The verifier checks both structured API `contract_edges` and the `stubborn-dsl` `contracts:` block so the demo exercises evidence-aware output, not only graph reachability.
+The `petclinic-contracts` source is stored as first-class contract evidence, not as SCIP symbols or ordinary `reference` edges. The verifier checks both structured API `contract_edges` / `contract_endpoints` and the `stubborn-dsl` `contracts:` block so the demo exercises evidence-aware output, not only graph reachability.

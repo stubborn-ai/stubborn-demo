@@ -6,12 +6,12 @@ Validate that a service-boundary contract can connect API gateway/customer code 
 
 The baseline workspace indexes each service independently. Without the contract evidence, ordinary Java references stay within service/module boundaries and the HTTP boundary remains a graph leaf.
 
-After writing `petclinic-contracts` into schema v4 contract tables, Stubborn should traverse:
+After writing `petclinic-contracts` into schema v4 contract tables, Stubborn should traverse the explicit contract endpoint target:
 
 ```text
-ApiGatewayController / CustomersServiceClient
-  -> GET http://customers-service/owners/{ownerId}
-  -> OwnerResource
+openapi customers-service:v1 GET /owners/{ownerId}
+  -> declared bindings
+  -> OwnerResource / CustomersServiceClient
 ```
 
 ## Command
@@ -33,8 +33,9 @@ stubborn context spring-petclinic-microservices/metadata/petclinic-workspace.db 
 
 With declared contract evidence written, context should include:
 
+- `openapi customers-service:v1 GET /owners/{ownerId}`
 - `CustomersServiceClient`
 - `OwnerResource`
 - `ApiGatewayController`
 
-The verifier also checks that the no-contract baseline does not already cross into `OwnerResource`; that protects the demo from accidentally relying on unsupported HTTP inference. In bridged mode it also checks structured `contract_edges` and the `stubborn-dsl` `contracts:` block.
+The verifier also checks that the no-contract baseline does not already cross into `OwnerResource`; that protects the demo from accidentally relying on unsupported HTTP inference. In bridged mode it also checks structured `contract_edges`, `contract_endpoints`, and the `stubborn-dsl` `contracts:` block.
