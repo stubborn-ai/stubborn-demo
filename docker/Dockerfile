@@ -64,7 +64,7 @@ COPY spring-petclinic-microservices/upstream.pin /opt/stubborn-demo/spring-petcl
 COPY scripts/resolve_symbol.py scripts/verify_petclinic_context.py \
     scripts/verify_demo_context.py scripts/verify_controller_context.py \
     scripts/verify_pay_flow_context.py scripts/verify_dukesbank_context.py \
-    scripts/generate_petclinic_ms_bridge.py scripts/verify_petclinic_ms_workspace.py \
+    scripts/verify_petclinic_ms_workspace.py \
     /opt/stubborn-demo/scripts/
 
 # Default CLI; compose services override entrypoint/command as needed

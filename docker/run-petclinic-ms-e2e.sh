@@ -83,8 +83,8 @@ python3 /opt/stubborn-demo/scripts/verify_petclinic_ms_workspace.py \
 
 echo
 echo "[5/7] Write HTTP contract evidence..."
-python3 /opt/stubborn-demo/scripts/generate_petclinic_ms_bridge.py \
-    --db "${DB_PATH}" \
+stubborn index-contract \
+    --out "${DB_PATH}" \
     --manifest "${EXAMPLE_ROOT}/contracts/http.yml"
 
 echo

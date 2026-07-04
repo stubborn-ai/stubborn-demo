@@ -15,7 +15,7 @@ Supporting services such as config server, discovery server, genAI, tracing, adm
 
 Stage 1 proves that Stubborn can compose independently indexed service directories into one workspace latest view.
 
-Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The contract bridge writes [`contracts/http.yml`](contracts/http.yml) into Stubborn schema v4 contract tables as `declared` evidence.
+Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The demo uses `stubborn index-contract` to write [`contracts/http.yml`](contracts/http.yml) into Stubborn schema v4 contract tables as `declared` evidence.
 
 ## Quick Start
 

@@ -82,8 +82,8 @@ stubborn info $DbPath --workspace $Workspace
 python (Join-Path $RepoRoot "scripts\verify_petclinic_ms_workspace.py") --db $DbPath --mode baseline
 
 Write-Host "`n[5/7] Write HTTP contract evidence..." -ForegroundColor Yellow
-python (Join-Path $RepoRoot "scripts\generate_petclinic_ms_bridge.py") `
-    --db $DbPath `
+stubborn index-contract `
+    --out $DbPath `
     --manifest (Join-Path $ExampleRoot "contracts\http.yml")
 
 Write-Host "`n[6/7] Cross-service context verification..." -ForegroundColor Yellow
