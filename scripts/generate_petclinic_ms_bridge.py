@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
-"""Generate a synthetic Stubborn contract graph for PetClinic microservices."""
+"""Write PetClinic microservice contract evidence into a Stubborn v4 workspace DB."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import sqlite3
+import re
 from pathlib import Path
 from typing import Any
 
 from stubborn.store.reader import latest_index_run_ids, resolve_stable_id
+from stubborn.store.writer import (
+    ContractBindingRecord,
+    ContractEndpointRecord,
+    ContractSchemaConstraintRecord,
+    ContractSnapshot,
+    IndexWriter,
+)
+
+_PATH_PARAM_RE = re.compile(r"\{([^}/]+)\}")
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -61,29 +71,31 @@ def symbol_details(
     }
 
 
-def endpoint_symbol(workspace: str, endpoint: dict[str, Any]) -> dict[str, Any]:
+def endpoint_stable_id(endpoint: dict[str, Any]) -> str:
     method = endpoint["method"].upper()
     service = endpoint["service"]
+    version = endpoint.get("version", "v1")
     path = endpoint["path"]
-    stable_id = f"stubborn http {workspace}/{service} {method} {path}"
-    return {
-        "stable_id": stable_id,
-        "display_name": endpoint.get("display_name") or f"{method} {path}",
-        "kind": "interface",
-        "signature": f"{method} http://{service}{path}",
-        "documentation": "Synthetic HTTP contract endpoint for PetClinic microservices.",
-    }
+    return f"openapi {service}:{version} {method} {path}"
 
 
-def build_bridge(db_path: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+def path_constraints(path: str) -> tuple[ContractSchemaConstraintRecord, ...]:
+    return tuple(
+        ContractSchemaConstraintRecord(
+            location="path",
+            field_path=match.group(1),
+            required=True,
+        )
+        for match in _PATH_PARAM_RE.finditer(path)
+    )
+
+
+def build_contract_snapshot(db_path: Path, manifest: dict[str, Any]) -> ContractSnapshot:
     workspace = manifest["workspace"]
-    symbols_by_id: dict[str, dict[str, Any]] = {}
-    edges: list[dict[str, str]] = []
+    endpoints: list[ContractEndpointRecord] = []
 
     for endpoint in manifest.get("endpoints", []):
-        endpoint_record = endpoint_symbol(workspace, endpoint)
-        endpoint_id = endpoint_record["stable_id"]
-        symbols_by_id[endpoint_id] = endpoint_record
+        bindings: list[ContractBindingRecord] = []
 
         for consumer in endpoint.get("consumers", []):
             consumer_record = symbol_details(
@@ -93,13 +105,13 @@ def build_bridge(db_path: Path, manifest: dict[str, Any]) -> dict[str, Any]:
                 display_name=consumer["display_name"],
                 prefer_type=bool(consumer.get("prefer_type", True)),
             )
-            symbols_by_id[consumer_record["stable_id"]] = consumer_record
-            edges.append(
-                {
-                    "from": consumer_record["stable_id"],
-                    "to": endpoint_id,
-                    "edge_kind": "reference",
-                }
+            bindings.append(
+                ContractBindingRecord(
+                    code_stable_id=consumer_record["stable_id"],
+                    role="consumer",
+                    evidence="declared",
+                    source="manual:contracts/http.yml",
+                )
             )
 
         for provider in endpoint.get("providers", []):
@@ -110,39 +122,58 @@ def build_bridge(db_path: Path, manifest: dict[str, Any]) -> dict[str, Any]:
                 display_name=provider["display_name"],
                 prefer_type=bool(provider.get("prefer_type", True)),
             )
-            symbols_by_id[provider_record["stable_id"]] = provider_record
-            edges.append(
-                {
-                    "from": endpoint_id,
-                    "to": provider_record["stable_id"],
-                    "edge_kind": "reference",
-                }
+            bindings.append(
+                ContractBindingRecord(
+                    code_stable_id=provider_record["stable_id"],
+                    role="provider",
+                    evidence="declared",
+                    source="manual:contracts/http.yml",
+                )
             )
 
-    return {
-        "language": "java",
-        "project_root": manifest.get("bridge_repo", "petclinic-contracts"),
-        "documents": [
-            {
-                "relative_path": "contracts/http.yml",
-                "symbols": sorted(symbols_by_id.values(), key=lambda item: item["stable_id"]),
-                "edges": sorted(edges, key=lambda item: (item["from"], item["to"], item["edge_kind"])),
-            }
-        ],
-    }
+        method = endpoint["method"].upper()
+        version = endpoint.get("version", "v1")
+        path = endpoint["path"]
+        endpoints.append(
+            ContractEndpointRecord(
+                stable_id=endpoint_stable_id(endpoint),
+                protocol="http",
+                service=endpoint["service"],
+                version=version,
+                method_or_verb=method,
+                address=path,
+                display_name=endpoint.get("display_name") or f"{method} {path}",
+                schema_constraints=path_constraints(path),
+                bindings=tuple(bindings),
+            )
+        )
+
+    return ContractSnapshot(
+        scip_source="contracts/http.yml",
+        project_root=manifest.get("bridge_repo", "petclinic-contracts"),
+        language="openapi",
+        endpoints=tuple(endpoints),
+    )
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", required=True, type=Path, help="Workspace symbols.db")
     parser.add_argument("--manifest", required=True, type=Path, help="Contract manifest")
-    parser.add_argument("--out", required=True, type=Path, help="Output JSON fixture")
     args = parser.parse_args()
 
-    bridge = build_bridge(args.db, load_manifest(args.manifest))
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(bridge, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"wrote {args.out} ({len(bridge['documents'][0]['symbols'])} symbols, {len(bridge['documents'][0]['edges'])} edges)")
+    manifest = load_manifest(args.manifest)
+    snapshot = build_contract_snapshot(args.db, manifest)
+    run_id = IndexWriter(args.db).write_contract(
+        snapshot,
+        workspace=manifest["workspace"],
+        repo_key=manifest.get("bridge_repo", "petclinic-contracts"),
+    )
+    binding_count = sum(len(endpoint.bindings) for endpoint in snapshot.endpoints)
+    print(
+        "wrote contract evidence "
+        f"(index_run_id={run_id}, endpoints={len(snapshot.endpoints)}, bindings={binding_count})"
+    )
     return 0
 
 

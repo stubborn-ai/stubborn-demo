@@ -1,4 +1,4 @@
-# Types expected in provider-side reverse traversal after bridge indexing.
+# Types expected in provider-side reverse traversal after declared contract evidence.
 OwnerResource
 CustomersServiceClient
 ApiGatewayController

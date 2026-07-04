@@ -25,6 +25,5 @@ jobs:
           name: spring-petclinic-microservices-e2e
           path: |
             spring-petclinic-microservices/metadata/petclinic-workspace.db
-            spring-petclinic-microservices/metadata/bridge/petclinic-contracts.json
             spring-petclinic-microservices/stub-output/*.stub.java
           if-no-files-found: ignore

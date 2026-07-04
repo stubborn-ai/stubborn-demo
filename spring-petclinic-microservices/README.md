@@ -15,7 +15,7 @@ Supporting services such as config server, discovery server, genAI, tracing, adm
 
 Stage 1 proves that Stubborn can compose independently indexed service directories into one workspace latest view.
 
-Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The contract bridge is generated from [`contracts/http.yml`](contracts/http.yml) into a small JSON fixture and indexed as `petclinic-contracts`.
+Stage 2 proves that explicit HTTP contract facts can bridge service boundaries without pretending SCIP alone understands microservice routing. The contract bridge writes [`contracts/http.yml`](contracts/http.yml) into Stubborn schema v4 contract tables as `declared` evidence.
 
 ## Quick Start
 
@@ -42,7 +42,6 @@ These are gitignored:
 - `upstream/`
 - `metadata/petclinic-workspace.db`
 - `metadata/indexes/*.scip`
-- `metadata/bridge/petclinic-contracts.json`
 - `stub-output/*.stub.java`
 
 ## Cases
@@ -56,10 +55,4 @@ These are gitignored:
 
 This demo should not claim that SCIP alone resolves HTTP, WebClient, Feign, or gateway route semantics. The honest claim is narrower and stronger: Stubborn can compose deterministic source graphs across service boundaries when service contracts are represented as explicit graph facts.
 
-The current `petclinic-contracts` bridge is a v3-compatible seed validation. It
-indexes declared contract bindings as ordinary `reference` edges so the existing
-workspace graph can traverse them. Evidence tiers are documented in
-[`CONTRACT-GRAPH.md`](https://github.com/stubborn-ai/stubborn/blob/main/docs/CONTRACT-GRAPH.md),
-but they are not yet persisted or rendered by `stubborn context`. A future schema
-version must make contract evidence first-class before this demo can claim
-evidence-aware output.
+The `petclinic-contracts` source is stored as first-class contract evidence, not as SCIP symbols or ordinary `reference` edges. The verifier checks both structured API `contract_edges` and the `stubborn-dsl` `contracts:` block so the demo exercises evidence-aware output, not only graph reachability.

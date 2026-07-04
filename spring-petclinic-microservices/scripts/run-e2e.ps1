@@ -8,7 +8,6 @@ $UpstreamRoot = Join-Path $ExampleRoot "upstream"
 $PinFile = Join-Path $ExampleRoot "upstream.pin"
 $MetadataDir = Join-Path $ExampleRoot "metadata"
 $IndexesDir = Join-Path $MetadataDir "indexes"
-$BridgeDir = Join-Path $MetadataDir "bridge"
 $StubOutputDir = Join-Path $ExampleRoot "stub-output"
 $DbPath = Join-Path $MetadataDir "petclinic-workspace.db"
 $Workspace = "petclinic-ms"
@@ -56,7 +55,7 @@ Push-Location $UpstreamRoot
 mvn -q -DskipTests package
 Pop-Location
 
-New-Item -ItemType Directory -Force -Path $MetadataDir, $IndexesDir, $BridgeDir, $StubOutputDir | Out-Null
+New-Item -ItemType Directory -Force -Path $MetadataDir, $IndexesDir, $StubOutputDir | Out-Null
 if (Test-Path $DbPath) { Remove-Item $DbPath }
 
 Write-Host "`n[2/8] Per-service scip-java indexes..." -ForegroundColor Yellow
@@ -82,24 +81,19 @@ Write-Host "`n[4/8] Baseline workspace verification..." -ForegroundColor Yellow
 stubborn info $DbPath --workspace $Workspace
 python (Join-Path $RepoRoot "scripts\verify_petclinic_ms_workspace.py") --db $DbPath --mode baseline
 
-Write-Host "`n[5/8] Generate HTTP contract bridge..." -ForegroundColor Yellow
-$bridgePath = Join-Path $BridgeDir "petclinic-contracts.json"
+Write-Host "`n[5/7] Write HTTP contract evidence..." -ForegroundColor Yellow
 python (Join-Path $RepoRoot "scripts\generate_petclinic_ms_bridge.py") `
     --db $DbPath `
-    --manifest (Join-Path $ExampleRoot "contracts\http.yml") `
-    --out $bridgePath
+    --manifest (Join-Path $ExampleRoot "contracts\http.yml")
 
-Write-Host "`n[6/8] Index HTTP contract bridge..." -ForegroundColor Yellow
-stubborn index --scip $bridgePath --out $DbPath --workspace $Workspace --repo "petclinic-contracts" --project-root $ExampleRoot
-
-Write-Host "`n[7/8] Cross-service context verification..." -ForegroundColor Yellow
+Write-Host "`n[6/7] Cross-service context verification..." -ForegroundColor Yellow
 python (Join-Path $RepoRoot "scripts\verify_petclinic_ms_workspace.py") --db $DbPath --mode bridged
 
-Write-Host "`n[8/8] Emit sample sidecar stubs..." -ForegroundColor Yellow
+Write-Host "`n[7/7] Emit sample sidecar stubs..." -ForegroundColor Yellow
 python (Join-Path $RepoRoot "scripts\verify_petclinic_ms_workspace.py") --db $DbPath --mode emit-stubs --stub-output $StubOutputDir
 
 Write-Host "`nDone." -ForegroundColor Green
 Write-Host "  Upstream : $UpstreamRoot @ $commit"
 Write-Host "  SQLite   : $DbPath"
-Write-Host "  Bridge   : $bridgePath"
+Write-Host "  Contract : contracts\http.yml -> v4 contract tables"
 Write-Host "  Stubs    : $StubOutputDir"

@@ -1,4 +1,4 @@
-# Types expected after indexing the HTTP contract bridge.
+# Types expected after writing declared HTTP contract evidence.
 CustomersServiceClient
 OwnerResource
 ApiGatewayController

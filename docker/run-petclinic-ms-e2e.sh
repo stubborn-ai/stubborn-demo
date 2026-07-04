@@ -7,7 +7,6 @@ EXAMPLE_ROOT="${EXAMPLE_ROOT:-/opt/stubborn-demo/spring-petclinic-microservices}
 PIN_FILE="${EXAMPLE_ROOT}/upstream.pin"
 METADATA_DIR="${EXAMPLE_ROOT}/metadata"
 INDEXES_DIR="${METADATA_DIR}/indexes"
-BRIDGE_DIR="${METADATA_DIR}/bridge"
 STUB_OUTPUT_DIR="${EXAMPLE_ROOT}/stub-output"
 DB_PATH="${METADATA_DIR}/petclinic-workspace.db"
 WORKSPACE="petclinic-ms"
@@ -43,7 +42,7 @@ echo "[1/8] Maven compile..."
   mvn -q -DskipTests package
 )
 
-mkdir -p "${METADATA_DIR}" "${INDEXES_DIR}" "${BRIDGE_DIR}" "${STUB_OUTPUT_DIR}"
+mkdir -p "${METADATA_DIR}" "${INDEXES_DIR}" "${STUB_OUTPUT_DIR}"
 rm -f "${DB_PATH}"
 
 echo
@@ -83,30 +82,19 @@ python3 /opt/stubborn-demo/scripts/verify_petclinic_ms_workspace.py \
     --mode baseline
 
 echo
-echo "[5/8] Generate HTTP contract bridge..."
-bridge_path="${BRIDGE_DIR}/petclinic-contracts.json"
+echo "[5/7] Write HTTP contract evidence..."
 python3 /opt/stubborn-demo/scripts/generate_petclinic_ms_bridge.py \
     --db "${DB_PATH}" \
-    --manifest "${EXAMPLE_ROOT}/contracts/http.yml" \
-    --out "${bridge_path}"
+    --manifest "${EXAMPLE_ROOT}/contracts/http.yml"
 
 echo
-echo "[6/8] Index HTTP contract bridge..."
-stubborn index \
-    --scip "${bridge_path}" \
-    --out "${DB_PATH}" \
-    --workspace "${WORKSPACE}" \
-    --repo "petclinic-contracts" \
-    --project-root "${EXAMPLE_ROOT}"
-
-echo
-echo "[7/8] Cross-service context verification..."
+echo "[6/7] Cross-service context verification..."
 python3 /opt/stubborn-demo/scripts/verify_petclinic_ms_workspace.py \
     --db "${DB_PATH}" \
     --mode bridged
 
 echo
-echo "[8/8] Emit sample sidecar stubs..."
+echo "[7/7] Emit sample sidecar stubs..."
 python3 /opt/stubborn-demo/scripts/verify_petclinic_ms_workspace.py \
     --db "${DB_PATH}" \
     --mode emit-stubs \
@@ -116,5 +104,5 @@ echo
 echo "Done."
 echo "  Upstream    : ${PETCLINIC_MS_ROOT} @ ${commit}"
 echo "  SQLite graph: ${DB_PATH}"
-echo "  Bridge      : ${bridge_path}"
+echo "  Contract    : ${EXAMPLE_ROOT}/contracts/http.yml -> v4 contract tables"
 echo "  Stubs       : ${STUB_OUTPUT_DIR}"

@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from stubborn.api import get_context
-from stubborn.store.reader import resolve_stable_id, workspace_run_summaries
+from stubborn.store.reader import list_contract_bindings, resolve_stable_id, workspace_run_summaries
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_ROOT = REPO_ROOT / "spring-petclinic-microservices"
@@ -39,17 +39,18 @@ def resolve(db_path: Path, repo_key: str, display_name: str) -> str:
     )
 
 
-def context_text(db_path: Path, repo_key: str, display_name: str) -> tuple[str, str]:
+def context_result(db_path: Path, repo_key: str, display_name: str, *, format: str = "java-stub"):
     target = resolve(db_path, repo_key, display_name)
     result = get_context(
         target,
         db_path=db_path,
+        format=format,
         workspace=WORKSPACE,
         call_depth=4,
         max_symbols=120,
         max_tokens=16_000,
     )
-    return target, result.text
+    return target, result
 
 
 def assert_contains(text: str, required: list[str], label: str) -> None:
@@ -64,17 +65,20 @@ def assert_absent(text: str, forbidden: tuple[str, ...], label: str) -> None:
         raise AssertionError(f"{label} unexpectedly crossed HTTP boundary: {', '.join(present)}")
 
 
-def verify_workspace(db_path: Path, *, expect_bridge: bool) -> None:
+def contract_bindings(db_path: Path):
+    try:
+        return list_contract_bindings(db_path, workspace=WORKSPACE)
+    except ValueError:
+        return []
+
+
+def verify_workspace(db_path: Path) -> None:
     summaries = workspace_run_summaries(db_path, workspace=WORKSPACE)
     repo_keys = {item.repo_key for item in summaries}
     required = set(expected_lines(EXPECTED_REPOS))
     missing = sorted(required - repo_keys)
     if missing:
         raise AssertionError(f"workspace missing repo summaries: {', '.join(missing)}")
-    if expect_bridge and "petclinic-contracts" not in repo_keys:
-        raise AssertionError("workspace missing petclinic-contracts bridge repo")
-    if not expect_bridge and "petclinic-contracts" in repo_keys:
-        raise AssertionError("baseline unexpectedly includes petclinic-contracts")
 
     print(f"workspace repos: {', '.join(sorted(repo_keys))}")
     print(f"workspace symbols: {sum(item.symbol_count for item in summaries)}")
@@ -82,24 +86,49 @@ def verify_workspace(db_path: Path, *, expect_bridge: bool) -> None:
 
 
 def verify_baseline(db_path: Path) -> None:
-    verify_workspace(db_path, expect_bridge=False)
-    target, text = context_text(db_path, *FORWARD_TARGET)
+    verify_workspace(db_path)
+    bindings = contract_bindings(db_path)
+    if bindings:
+        raise AssertionError("baseline unexpectedly includes contract bindings")
+    target, result = context_result(db_path, *FORWARD_TARGET)
+    text = result.text
     assert_absent(text, BASELINE_FORBIDDEN, "baseline context")
     print(f"baseline target: {target}")
     print("baseline HTTP boundary check passed")
 
 
 def verify_bridged(db_path: Path) -> None:
-    verify_workspace(db_path, expect_bridge=True)
+    verify_workspace(db_path)
+    bindings = contract_bindings(db_path)
+    if not bindings:
+        raise AssertionError("workspace missing v4 contract bindings")
+    if {binding.evidence for binding in bindings} != {"declared"}:
+        raise AssertionError("PetClinic contract bindings must be declared evidence")
 
-    forward_target, forward_text = context_text(db_path, *FORWARD_TARGET)
+    forward_target, forward = context_result(db_path, *FORWARD_TARGET)
+    forward_text = forward.text
     assert_contains(forward_text, expected_lines(EXPECTED_FORWARD), "forward bridge context")
+    assert_contract_evidence(forward, "forward bridge context")
     print(f"forward target: {forward_target}")
 
-    reverse_target, reverse_text = context_text(db_path, *REVERSE_TARGET)
+    reverse_target, reverse = context_result(db_path, *REVERSE_TARGET)
+    reverse_text = reverse.text
     assert_contains(reverse_text, expected_lines(EXPECTED_REVERSE), "reverse bridge context")
+    assert_contract_evidence(reverse, "reverse bridge context")
+
+    _, forward_dsl = context_result(db_path, *FORWARD_TARGET, format="stubborn-dsl")
+    if "contracts:" not in forward_dsl.text or "evidence=declared" not in forward_dsl.text:
+        raise AssertionError("stubborn-dsl output missing declared contracts block")
+
     print(f"reverse target: {reverse_target}")
-    print("contract bridge checks passed")
+    print("contract evidence checks passed")
+
+
+def assert_contract_evidence(result, label: str) -> None:
+    if not result.contract_edges:
+        raise AssertionError(f"{label} missing structured contract_edges")
+    if "declared" not in result.contract_evidence_summary:
+        raise AssertionError(f"{label} missing declared contract evidence summary")
 
 
 def emit_stubs(db_path: Path, output_dir: Path) -> None:
@@ -109,9 +138,9 @@ def emit_stubs(db_path: Path, output_dir: Path) -> None:
         ("owner-impact-radius.stub.java", REVERSE_TARGET),
     ]
     for filename, target_spec in cases:
-        target, text = context_text(db_path, *target_spec)
+        target, result = context_result(db_path, *target_spec)
         output_path = output_dir / filename
-        output_path.write_text(text, encoding="utf-8")
+        output_path.write_text(result.text, encoding="utf-8")
         print(f"wrote {output_path} for {target}")
 
 

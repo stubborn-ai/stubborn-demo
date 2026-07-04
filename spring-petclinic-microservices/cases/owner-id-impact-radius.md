@@ -21,10 +21,10 @@ docker compose run --rm petclinic-ms-e2e
 
 ## Expected Neighbors
 
-With the contract bridge indexed, reverse context for the owner provider side should include:
+With declared contract evidence written, reverse context for the owner provider side should include:
 
 - `OwnerResource`
 - `CustomersServiceClient`
 - `ApiGatewayController`
 
-This is the microservices version of the ADR-010 reverse traversal guard: a provider-side target must be able to find cross-service consumers, not only callees in its own repo.
+This is the microservices version of the ADR-010 reverse traversal guard, now using ADR-012 contract evidence: a provider-side target must be able to find cross-service consumers, not only callees in its own repo.
