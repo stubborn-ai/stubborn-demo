@@ -132,9 +132,10 @@ Smoke-test without Cursor:
 Agent workflow:
 
 1. `workspace_info` with `workspace: "default"` if you want to confirm the current run kind
-2. `list_symbols` with `query: "OrderService"`
-3. `get_context` with the returned `stable_id`
-4. `metrics` with `sources: demo-spring/src/main/java`
+2. `list_contracts` with `workspace: "default"` to confirm there are no contract sources in this code-only demo
+3. `list_symbols` with `query: "OrderService"`
+4. `get_context` with the returned `stable_id`
+5. `metrics` with `sources: demo-spring/src/main/java`
 
 See [stubborn-mcp docs](https://github.com/stubborn-ai/stubborn-mcp/blob/main/docs/MCP.md).
 

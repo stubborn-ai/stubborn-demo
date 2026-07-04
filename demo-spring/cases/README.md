@@ -11,7 +11,7 @@ Add a new case by creating a markdown file here and (optionally) a script snippe
 
 ## MCP smoke
 
-`../scripts/mcp-smoke.ps1` is the quick check for `workspace_info`, `list_symbols`, and `get_context` against the demo-spring workspace.
+`../scripts/mcp-smoke.ps1` is the quick check for `workspace_info`, `list_contracts`, `list_symbols`, and `get_context` against the demo-spring workspace.
 
 ## Case template
 
