@@ -23,6 +23,13 @@ metadata/
 !**/metadata/expected-context-types-vet-controller.txt
 !**/metadata/expected-context-types-controller.txt
 !**/metadata/expected-context-types-pay-order.txt
+!**/metadata/expected-workspace-symbols.txt
+!**/metadata/expected-visit-to-customer-types.txt
+!**/metadata/expected-owner-impact-types.txt
+
+# Generated sidecar/context outputs
+stub-output/
+**/stub-output/
 
 # External clones
 upstream/

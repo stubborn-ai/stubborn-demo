@@ -1,0 +1,30 @@
+name: PetClinic Microservices E2E
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 8 * * 0"
+
+jobs:
+  petclinic-ms-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build toolchain image
+        run: docker compose build --no-cache toolchain
+
+      - name: Run spring-petclinic-microservices E2E
+        run: docker compose run --rm petclinic-ms-e2e
+
+      - name: Upload petclinic microservices artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-petclinic-microservices-e2e
+          path: |
+            spring-petclinic-microservices/metadata/petclinic-workspace.db
+            spring-petclinic-microservices/metadata/bridge/petclinic-contracts.json
+            spring-petclinic-microservices/stub-output/*.stub.java
+          if-no-files-found: ignore

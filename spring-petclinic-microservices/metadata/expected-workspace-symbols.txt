@@ -1,0 +1,5 @@
+# Expected repo keys in the petclinic-ms workspace summary.
+api-gateway
+customers-service
+vets-service
+visits-service

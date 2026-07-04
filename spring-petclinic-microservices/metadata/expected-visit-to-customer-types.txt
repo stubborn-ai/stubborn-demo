@@ -1,0 +1,4 @@
+# Types expected after indexing the HTTP contract bridge.
+CustomersServiceClient
+OwnerResource
+ApiGatewayController

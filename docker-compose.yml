@@ -37,6 +37,14 @@ services:
     environment:
       PETCLINIC_ROOT: /petclinic
 
+  petclinic-ms-e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["/bin/bash", "/usr/local/bin/run-petclinic-ms-e2e"]
+    volumes:
+      - .:/opt/stubborn-demo
+    environment:
+      PETCLINIC_MS_ROOT: /petclinic-ms
+
   dukesbank-e2e:
     image: stubborn-demo:e2e
     entrypoint: ["/bin/bash", "/usr/local/bin/run-dukesbank-e2e"]

@@ -1,0 +1,4 @@
+# Types expected in provider-side reverse traversal after bridge indexing.
+OwnerResource
+CustomersServiceClient
+ApiGatewayController

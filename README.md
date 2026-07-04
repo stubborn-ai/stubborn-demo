@@ -13,6 +13,7 @@ still exercising the public CLI/API contracts.
 | [`demo-spring`](demo-spring/) | Small Spring Boot app for fast SCIP -> SQLite -> context validation |
 | [`multi-repo`](multi-repo/) | Workspace graph validation for source-available internal repos |
 | [`spring-petclinic`](spring-petclinic/) | Scale-up validation against a pinned upstream Spring PetClinic |
+| [`spring-petclinic-microservices`](spring-petclinic-microservices/) | Multi-service workspace validation with explicit HTTP contract bridge |
 | [`dukesbank`](dukesbank/) | Legacy Java EE migration-oriented validation |
 | [`migration-bridge`](migration-bridge/) | Minimal consumer sketch for migration workflows |
 
@@ -26,6 +27,7 @@ docker compose run --rm e2e
 docker compose run --rm merge-e2e
 docker compose run --rm multi-repo-e2e
 docker compose run --rm petclinic-e2e
+docker compose run --rm petclinic-ms-e2e
 ```
 
 Host path:

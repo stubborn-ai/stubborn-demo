@@ -1,0 +1,58 @@
+{
+  "workspace": "petclinic-ms",
+  "bridge_repo": "petclinic-contracts",
+  "endpoints": [
+    {
+      "id": "customers-owner-read",
+      "service": "customers-service",
+      "method": "GET",
+      "path": "/owners/{ownerId}",
+      "display_name": "GET /owners/{ownerId}",
+      "consumers": [
+        {
+          "repo": "api-gateway",
+          "display_name": "CustomersServiceClient",
+          "prefer_type": true
+        },
+        {
+          "repo": "api-gateway",
+          "display_name": "ApiGatewayController",
+          "prefer_type": true
+        }
+      ],
+      "providers": [
+        {
+          "repo": "customers-service",
+          "display_name": "OwnerResource",
+          "prefer_type": true
+        }
+      ]
+    },
+    {
+      "id": "visits-for-pets-read",
+      "service": "visits-service",
+      "method": "GET",
+      "path": "/pets/visits",
+      "display_name": "GET /pets/visits",
+      "consumers": [
+        {
+          "repo": "api-gateway",
+          "display_name": "VisitsServiceClient",
+          "prefer_type": true
+        },
+        {
+          "repo": "api-gateway",
+          "display_name": "ApiGatewayController",
+          "prefer_type": true
+        }
+      ],
+      "providers": [
+        {
+          "repo": "visits-service",
+          "display_name": "VisitResource",
+          "prefer_type": true
+        }
+      ]
+    }
+  ]
+}

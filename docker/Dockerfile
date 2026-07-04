@@ -53,13 +53,18 @@ RUN sed -i 's/\r$//' /usr/local/bin/run-merge-e2e && chmod +x /usr/local/bin/run
 COPY docker/run-petclinic-e2e.sh /usr/local/bin/run-petclinic-e2e
 RUN sed -i 's/\r$//' /usr/local/bin/run-petclinic-e2e && chmod +x /usr/local/bin/run-petclinic-e2e
 
+COPY docker/run-petclinic-ms-e2e.sh /usr/local/bin/run-petclinic-ms-e2e
+RUN sed -i 's/\r$//' /usr/local/bin/run-petclinic-ms-e2e && chmod +x /usr/local/bin/run-petclinic-ms-e2e
+
 COPY docker/run-dukesbank-e2e.sh /usr/local/bin/run-dukesbank-e2e
 RUN sed -i 's/\r$//' /usr/local/bin/run-dukesbank-e2e && chmod +x /usr/local/bin/run-dukesbank-e2e
 
 COPY spring-petclinic/upstream.pin /opt/stubborn-demo/spring-petclinic/upstream.pin
+COPY spring-petclinic-microservices/upstream.pin /opt/stubborn-demo/spring-petclinic-microservices/upstream.pin
 COPY scripts/resolve_symbol.py scripts/verify_petclinic_context.py \
     scripts/verify_demo_context.py scripts/verify_controller_context.py \
     scripts/verify_pay_flow_context.py scripts/verify_dukesbank_context.py \
+    scripts/generate_petclinic_ms_bridge.py scripts/verify_petclinic_ms_workspace.py \
     /opt/stubborn-demo/scripts/
 
 # Default CLI; compose services override entrypoint/command as needed
