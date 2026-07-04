@@ -55,3 +55,11 @@ These are gitignored:
 ## Boundary
 
 This demo should not claim that SCIP alone resolves HTTP, WebClient, Feign, or gateway route semantics. The honest claim is narrower and stronger: Stubborn can compose deterministic source graphs across service boundaries when service contracts are represented as explicit graph facts.
+
+The current `petclinic-contracts` bridge is a v3-compatible seed validation. It
+indexes declared contract bindings as ordinary `reference` edges so the existing
+workspace graph can traverse them. Evidence tiers are documented in
+[`CONTRACT-GRAPH.md`](https://github.com/stubborn-ai/stubborn/blob/main/docs/CONTRACT-GRAPH.md),
+but they are not yet persisted or rendered by `stubborn context`. A future schema
+version must make contract evidence first-class before this demo can claim
+evidence-aware output.
