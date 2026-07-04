@@ -44,6 +44,8 @@ Host path:
 cd demo-spring
 ./scripts/run-e2e.sh
 ./scripts/run-merge-e2e.sh
+cd ../multi-repo
+./scripts/run-e2e.sh
 ```
 
 Host runs require JDK 21+, Maven, `scip-java`, and Stubborn on `PATH`.

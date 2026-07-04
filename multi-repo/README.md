@@ -15,5 +15,5 @@ Validation proves two cases:
    crosses from `repo-a` into `repo-b` and includes `Helper`.
 
 ```bash
-python scripts/verify_multi_repo_workspace.py
+./scripts/run-e2e.sh
 ```
