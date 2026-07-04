@@ -21,7 +21,7 @@ TARGET = (
 def main() -> int:
     if not DB_PATH.exists():
         print(f"Missing symbol graph: {DB_PATH}", file=sys.stderr)
-        print("Run demo-spring/scripts/run-e2e.ps1 or docker compose run --rm e2e", file=sys.stderr)
+        print("Run demo-spring/scripts/run-e2e.sh or docker compose run --rm e2e", file=sys.stderr)
         return 1
 
     required = [
