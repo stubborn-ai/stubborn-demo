@@ -2,6 +2,8 @@
 
 Official [spring-petclinic](https://github.com/spring-projects/spring-petclinic) indexed via **scip-java** + Stubborn. Validates compression and neighbor coverage on a ~30-file Spring Boot app (vs ~14 in demo-spring).
 
+This runbook follows the same tiering as the rest of the program: Docker first, WSL/bash for fast host execution, and PowerShell only as a fallback launcher on Windows.
+
 | | demo-spring | spring-petclinic |
 |---|-------------|------------------|
 | Java files | ~14 | ~30 (`src/main/java`) |
@@ -26,13 +28,13 @@ Outputs (gitignored locally):
 - `metadata/symbols.db`
 - `metadata/vet-controller.stub.java`
 
-## Host E2E (PowerShell)
+## Host E2E (bash)
 
 Requires JDK 21+, Maven, scip-java, stubborn on PATH.
 
-```powershell
+```bash
 cd spring-petclinic
-./scripts/run-e2e.ps1
+./scripts/run-e2e.sh
 ```
 
 Clones to `upstream/` (gitignored).

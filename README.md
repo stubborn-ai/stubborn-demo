@@ -6,6 +6,14 @@ This repo is the product-level demo surface for the Stubborn AI program. It keep
 large or story-driven validation projects out of the headless core repo while
 still exercising the public CLI/API contracts.
 
+## Execution tiers
+
+| Tier | Default for | Entry point |
+|------|-------------|-------------|
+| Docker | Most users and CI | `docker compose build` + `docker compose run --rm ...` |
+| WSL/bash | Fast local validation on Linux, macOS, or Windows via WSL2 | Bash host scripts under `demo-spring/`, `spring-petclinic/`, `spring-petclinic-microservices/`, and `dukesbank/` |
+| PowerShell fallback | Windows host users who need a fallback | Historical `*.ps1` scripts in git history, or thin wrappers that call the same targets |
+
 ## Demos
 
 | Demo | Purpose |
@@ -32,13 +40,15 @@ docker compose run --rm petclinic-ms-e2e
 
 Host path:
 
-```powershell
+```bash
 cd demo-spring
-./scripts/run-e2e.ps1
-./scripts/run-merge-e2e.ps1
+./scripts/run-e2e.sh
+./scripts/run-merge-e2e.sh
 ```
 
 Host runs require JDK 21+, Maven, `scip-java`, and Stubborn on `PATH`.
+
+On Windows, prefer WSL2 for the host path. Treat PowerShell as a fallback launcher only.
 
 ## Repo Boundaries
 

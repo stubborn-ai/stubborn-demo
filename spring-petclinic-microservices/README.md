@@ -2,6 +2,8 @@
 
 Official [spring-petclinic-microservices](https://github.com/spring-petclinic/spring-petclinic-microservices) indexed as a Stubborn workspace. This demo validates the jump from a single Spring app to a multi-service graph.
 
+Tier policy matches the rest of the program: Docker is the canonical cross-platform path, WSL/bash is the fast local path, and PowerShell is a thin fallback only.
+
 The upstream project is one Git repository with multiple service directories. Stubborn treats each service directory as a separate workspace repo:
 
 - `api-gateway`
@@ -28,12 +30,16 @@ docker compose run --rm petclinic-ms-e2e
 
 Host path:
 
-```powershell
+```bash
 cd spring-petclinic-microservices
-./scripts/run-e2e.ps1
+./scripts/run-e2e.sh
 ```
 
 Host runs require JDK 21+, Maven, `scip-java`, Python, and `stubborn` on `PATH`.
+
+## MCP Smoke Test
+
+After `./scripts/run-e2e.sh`, run `./scripts/mcp-smoke.sh` to verify the MCP surface against the real `petclinic-ms` workspace DB. The smoke check exercises `workspace_info`, `list_contracts`, and `get_context` on both the `CustomersServiceClient` consumer path and the `OwnerResource` provider path.
 
 ## Generated Artifacts
 

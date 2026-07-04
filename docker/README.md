@@ -86,8 +86,10 @@ docker compose build --build-arg STUBBORN_SPEC=stubborn-stub
 ## Windows notes
 
 - Use Docker Desktop with Linux containers.
+- WSL2 is the recommended host shell if you want to run the host scripts locally.
+- If you need a native Windows fallback, keep it thin and point it at the same Docker targets; the historical PS1 scripts can be recovered from git history.
 - Generated files appear under `demo-spring\metadata\` via bind mount.
-- PowerShell users can still use `demo-spring/scripts/run-e2e.ps1` on the host.
+- Host users can run `demo-spring/scripts/run-e2e.sh` on Linux/WSL.
 
 ## Related
 

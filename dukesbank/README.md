@@ -4,6 +4,8 @@ Indexes the **external** [Duke's Bank](https://github.com/jiananwang/dukesbank) 
 
 This is the **formal runbook** for Duke's Bank LLM context. See also [migration-bridge](../migration-bridge/).
 
+Tier policy matches the rest of the program: Docker is the canonical cross-platform path, WSL/bash is the fast local path, and PowerShell stays as a thin fallback launcher on Windows.
+
 ## Layout contract
 
 ```
@@ -19,10 +21,10 @@ Optional cross-program runbook: [anchor-migration/demo-dukesbank](https://github
 
 Requires JDK, Maven, `scip-java`, and `stubborn` on PATH:
 
-```powershell
+```bash
 cd dukesbank
-.\scripts\run-e2e.ps1
-python ..\scripts\verify_dukesbank_context.py
+./scripts/run-e2e.sh
+python3 ../scripts/verify_dukesbank_context.py
 ```
 
 ## Docker

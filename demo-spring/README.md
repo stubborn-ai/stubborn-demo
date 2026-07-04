@@ -12,6 +12,8 @@ A **small, modern** Spring Boot 3 application used as the primary end-to-end exa
 
 Designed to be extended with additional **cases** under [`cases/`](cases/) without growing into a monolith.
 
+This demo follows the program policy: Docker is the canonical path, WSL/bash is the fast local path, and PowerShell is only a fallback launcher for Windows host users.
+
 ## Layout
 
 ```text
@@ -48,11 +50,11 @@ See [docker/README.md](../docker/README.md).
 - **[scip-java](https://github.com/sourcegraph/scip-java)** on `PATH`
 - **Stubborn** installed: `pip install stubborn-stub` (or editable from a local core checkout)
 
-## Quick E2E (PowerShell, host)
+## Quick E2E (bash, host)
 
-```powershell
+```bash
 cd demo-spring
-./scripts/run-e2e.ps1
+./scripts/run-e2e.sh
 ```
 
 Outputs:
@@ -65,9 +67,9 @@ Outputs:
 
 Use this host script to validate the **contract-level** dev loop for incremental merge:
 
-```powershell
+```bash
 cd demo-spring
-./scripts/run-merge-e2e.ps1
+./scripts/run-merge-e2e.sh
 ```
 
 What it proves:
@@ -119,14 +121,14 @@ Use the E2E script to resolve `OrderService` automatically from the SQLite index
 With the **stubborn-demo repo root** open as the Cursor workspace:
 
 1. Install: `pip install stubborn-stub stubborn-mcp`
-2. Ensure `metadata/symbols.db` exists (`./scripts/run-e2e.ps1` or index step above)
+2. Ensure `metadata/symbols.db` exists (`./scripts/run-e2e.sh` or index step above)
 3. Configure Cursor MCP with `command: stubborn-mcp` and `STUBBORN_DB` pointing at `demo-spring/metadata/symbols.db`
 4. **Cursor Settings → MCP** → enable `stubborn` (green) → Reload if needed
 
 Smoke-test without Cursor:
 
-```powershell
-./scripts/mcp-smoke.ps1
+```bash
+./scripts/mcp-smoke.sh
 ```
 
 Agent workflow:
