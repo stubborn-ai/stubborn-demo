@@ -2,15 +2,27 @@
 # End-to-end: demo-spring save -> scip-java -> stubborn index --merge
 set -euo pipefail
 
-DEMO_ROOT="${DEMO_ROOT:-/demo}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEMO_ROOT="${DEMO_ROOT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
 PROBE_RELATIVE_PATH="src/main/java/com/example/orders/service/MergeProbeService.java"
 PROBE_PATH="${DEMO_ROOT}/${PROBE_RELATIVE_PATH}"
 DB_PATH="${DEMO_ROOT}/metadata/symbols.db"
 PROBE_DISPLAY_NAME="MergeProbeService"
-WORKSPACE_ROOT="$(cd "${DEMO_ROOT}/../.." && pwd)"
-export PYTHONPATH="${WORKSPACE_ROOT}/stubborn/src:${WORKSPACE_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 probe_added=0
 cleanup_complete=0
+
+assert_command() {
+  local name="$1"
+  if ! command -v "${name}" >/dev/null 2>&1; then
+    echo "Required command not found on PATH: ${name}" >&2
+    exit 1
+  fi
+}
+
+assert_command mvn
+assert_command scip-java
+assert_command stubborn
+assert_command python3
 
 assert_command() {
   local name="$1"

@@ -5,13 +5,19 @@ set -euo pipefail
 DEMO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DB_PATH="${DEMO_ROOT}/metadata/symbols.db"
 SOURCES="${DEMO_ROOT}/src/main/java"
-WORKSPACE_ROOT="$(cd "${DEMO_ROOT}/../.." && pwd)"
-export PYTHONPATH="${WORKSPACE_ROOT}/stubborn/src:${WORKSPACE_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 if [[ ! -f "${DB_PATH}" ]]; then
   echo "symbols.db missing — run scripts/run-e2e.sh first (or: stubborn index --scip index.scip --out metadata/symbols.db)" >&2
   exit 1
 fi
+
+python3 - <<'PY'
+import importlib
+try:
+    importlib.import_module("stubborn_mcp")
+except Exception as exc:
+    raise SystemExit(f"Required Python module not importable: stubborn_mcp ({exc})")
+PY
 
 export STUBBORN_DB="${DB_PATH}"
 

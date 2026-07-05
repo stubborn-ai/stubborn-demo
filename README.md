@@ -48,7 +48,16 @@ cd ../multi-repo
 ./scripts/run-e2e.sh
 ```
 
-Host runs require JDK 21+, Maven, `scip-java`, and Stubborn on `PATH`.
+Host runs require JDK 21+, Maven, `scip-java`, `python3`, and the installed
+`stubborn-stub` package / `stubborn` CLI in the active environment.
+`mcp-smoke.sh` scripts additionally require `stubborn-mcp` installed.
+They do not create or manage a Python virtual environment; use your own
+`venv`, `uv`, or equivalent if you want isolation.
+Some demos also require explicit roots:
+- `multi-repo` expects `stubborn` installed in the current environment.
+- `dukesbank` expects `BANK_ROOT` to point at the bank module directory.
+- `spring-petclinic` and `spring-petclinic-microservices` clone pinned upstream
+  repos into their own local `upstream/` directories.
 
 On Windows, prefer WSL2 for the host path. Treat PowerShell as a fallback launcher only.
 

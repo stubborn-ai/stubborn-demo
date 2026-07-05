@@ -47,8 +47,9 @@ See [docker/README.md](../docker/README.md).
 
 - **JDK 21+**
 - **Maven 3.9+**
+- **Python 3**
 - **[scip-java](https://github.com/sourcegraph/scip-java)** on `PATH`
-- **Stubborn** installed: `pip install stubborn-stub` (or editable from a local core checkout)
+- **Stubborn** installed in the active environment: `pip install stubborn-stub`
 
 ## Quick E2E (bash, host)
 
@@ -130,6 +131,9 @@ Smoke-test without Cursor:
 ```bash
 ./scripts/mcp-smoke.sh
 ```
+
+This smoke script requires `stubborn-mcp` to be installed in the same active
+environment as `stubborn-stub`.
 
 Agent workflow:
 

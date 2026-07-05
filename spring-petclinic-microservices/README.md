@@ -36,10 +36,15 @@ cd spring-petclinic-microservices
 ```
 
 Host runs require JDK 21+, Maven, `scip-java`, Python, and `stubborn` on `PATH`.
+The host script clones the pinned upstream repo into `upstream/` and uses
+explicit service roots; it does not depend on sibling source trees or a private
+`PYTHONPATH`.
 
 ## MCP Smoke Test
 
 After `./scripts/run-e2e.sh`, run `./scripts/mcp-smoke.sh` to verify the MCP surface against the real `petclinic-ms` workspace DB. The smoke check exercises `workspace_info`, `list_contracts`, and `get_context` on both the `CustomersServiceClient` consumer path and the `OwnerResource` provider path.
+That smoke script requires `stubborn-mcp` to be installed in the same active
+environment as `stubborn`.
 
 ## Generated Artifacts
 

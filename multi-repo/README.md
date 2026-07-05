@@ -14,6 +14,15 @@ Validation proves two cases:
 2. With both repos indexed into the same workspace DB, `context --workspace`
    crosses from `repo-a` into `repo-b` and includes `Helper`.
 
+Host environment:
+
+- `./scripts/run-e2e.sh` expects `python3` and the installed `stubborn` CLI in
+  the active environment.
+- You may use your own virtual environment, but the script does not create or
+  manage one for you.
+- Recommended setup for local work is a user-owned `venv`, `uv`, or similar
+  environment manager outside the repo tree.
+
 ```bash
 ./scripts/run-e2e.sh
 ```

@@ -19,9 +19,11 @@ Optional cross-program runbook: [anchor-migration/demo-dukesbank](https://github
 
 ## Quick start (host)
 
-Requires JDK, Maven, `scip-java`, and `stubborn` on PATH:
+Requires JDK, Maven, `scip-java`, `python3`, `stubborn` on PATH, and an
+explicit `BANK_ROOT` that points at the Duke's Bank bank module directory:
 
 ```bash
+export BANK_ROOT=/path/to/dukesbank/src/j2eetutorial14/examples/bank
 cd dukesbank
 ./scripts/run-e2e.sh
 python3 ../scripts/verify_dukesbank_context.py
@@ -36,7 +38,8 @@ docker compose build
 docker compose run --rm dukesbank-e2e
 ```
 
-Set `DUKESBANK_ROOT` if the bank module is not at `../../dukesbank/...` relative to this repo.
+`BANK_ROOT` defaults to `/bank` inside the Docker compose service. Override it
+only if you mount the bank module somewhere else.
 
 ## Artifacts
 

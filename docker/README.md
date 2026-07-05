@@ -11,6 +11,10 @@ Reproducible toolchain for Stubborn without installing JDK, Maven, or scip-java 
 | scip-java | `0.12.3` (`scip-java_2.13`, via Coursier) |
 | Python | 3.x + `stubborn` CLI installed from the Docker build arg `STUBBORN_SPEC` |
 
+The container entrypoints rely on explicit compose mount points and container
+paths such as `/demo`, `/petclinic`, `/petclinic-ms`, and `/bank`; they do not
+search for sibling host checkouts.
+
 ## Quick start
 
 From the **repository root**:
@@ -28,7 +32,7 @@ docker compose run --rm merge-e2e
 # Run spring-petclinic scale-up E2E (~5 min first run; clones upstream)
 docker compose run --rm petclinic-e2e
 
-# Duke's Bank Step 7 (requires sibling dukesbank clone at ../../dukesbank)
+# Duke's Bank Step 7 (requires `BANK_ROOT` in the container; default `/bank`)
 docker compose run --rm dukesbank-e2e
 
 # Inspect outputs on the host

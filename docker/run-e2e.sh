@@ -3,7 +3,6 @@
 set -euo pipefail
 
 DEMO_ROOT="${DEMO_ROOT:-/demo}"
-
 cd "${DEMO_ROOT}"
 
 echo "== orders-demo E2E (Docker) =="

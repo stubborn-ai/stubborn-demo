@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 import os
 import shlex
 from pathlib import Path
@@ -13,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "multi-repo" / "fixtures"
 TARGET = "semanticdb maven com/example/app/Controller#handle()."
 SERVICE_TARGET = "semanticdb maven com/example/lib/Service#"
-DEFAULT_STUBBORN_CMD = [sys.executable, "-c", "from stubborn.cli import app; app()"]
+DEFAULT_STUBBORN_CMD = ["stubborn"]
 
 
 def stubborn_cmd() -> list[str]:

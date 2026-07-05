@@ -66,7 +66,8 @@ stubborn metrics "${METADATA_DIR}/symbols.db" \
     --sources src/main/java \
     --stub-out "${stub_path}"
 
-python3 /opt/stubborn-demo/scripts/verify_petclinic_context.py
+python3 /opt/stubborn-demo/scripts/verify_petclinic_context.py \
+    --java-root "${PETCLINIC_ROOT}/src/main/java"
 
 echo
 echo "Done."

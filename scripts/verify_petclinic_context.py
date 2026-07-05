@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -12,13 +13,21 @@ from stubborn.store.reader import resolve_stable_id
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_ROOT = REPO_ROOT / "spring-petclinic"
 DB_PATH = EXAMPLE_ROOT / "metadata" / "symbols.db"
-JAVA_ROOT = EXAMPLE_ROOT / "upstream" / "src" / "main" / "java"
 EXPECTED_PATH = EXAMPLE_ROOT / "metadata" / "expected-context-types-vet-controller.txt"
 TARGET_DISPLAY = "VetController"
 MIN_SAVINGS_PERCENT = 70.0
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--java-root",
+        required=True,
+        type=Path,
+        help="Path to the Spring PetClinic src/main/java tree",
+    )
+    args = parser.parse_args()
+
     if not DB_PATH.exists():
         print(f"Missing symbol graph: {DB_PATH}", file=sys.stderr)
         print(
@@ -41,14 +50,12 @@ def main() -> int:
     context = get_context(target, db_path=DB_PATH)
     missing = [name for name in required if name not in context.text]
 
-    sources = JAVA_ROOT
+    sources = args.java_root
     if not sources.exists():
-        sources = Path("/petclinic/src/main/java")
-    if not sources.exists():
-        print("warning: Java sources not found for metrics; using graph-only checks", file=sys.stderr)
-        metrics = None
-    else:
-        metrics = get_metrics(target, sources, db_path=DB_PATH)
+        print(f"Missing Java sources: {sources}", file=sys.stderr)
+        return 1
+
+    metrics = get_metrics(target, sources, db_path=DB_PATH)
 
     print(f"target: {target}")
     print(f"symbols: {context.symbol_count}")

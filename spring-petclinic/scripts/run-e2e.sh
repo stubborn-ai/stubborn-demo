@@ -6,7 +6,6 @@ EXAMPLE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "${EXAMPLE_ROOT}/../.." && pwd)"
 UPSTREAM_ROOT="${EXAMPLE_ROOT}/upstream"
 PIN_FILE="${EXAMPLE_ROOT}/upstream.pin"
-export PYTHONPATH="${REPO_ROOT}/stubborn/src:${REPO_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 read_pin_value() {
   local key="$1"
@@ -82,7 +81,8 @@ stubborn context "${db_path}" --target "${target}" --out "${stub_path}"
 echo
 echo "[6/6] metrics + verify..."
 stubborn metrics "${db_path}" --target "${target}" --sources src/main/java
-python3 "${REPO_ROOT}/scripts/verify_petclinic_context.py"
+python3 "${REPO_ROOT}/scripts/verify_petclinic_context.py" \
+  --java-root "${UPSTREAM_ROOT}/src/main/java"
 
 echo
 echo "Done."

@@ -4,13 +4,19 @@ set -euo pipefail
 
 EXAMPLE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DB_PATH="${EXAMPLE_ROOT}/metadata/petclinic-workspace.db"
-WORKSPACE_ROOT="$(cd "${EXAMPLE_ROOT}/../.." && pwd)"
-export PYTHONPATH="${WORKSPACE_ROOT}/stubborn/src:${WORKSPACE_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 if [[ ! -f "${DB_PATH}" ]]; then
   echo "petclinic workspace DB missing — run scripts/run-e2e.sh first." >&2
   exit 1
 fi
+
+python3 - <<'PY'
+import importlib
+try:
+    importlib.import_module("stubborn_mcp")
+except Exception as exc:
+    raise SystemExit(f"Required Python module not importable: stubborn_mcp ({exc})")
+PY
 
 export STUBBORN_DB="${DB_PATH}"
 

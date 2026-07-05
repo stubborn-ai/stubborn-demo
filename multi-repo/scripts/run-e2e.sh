@@ -4,11 +4,17 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEMO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-WORKSPACE_ROOT="$(cd "${DEMO_ROOT}/.." && pwd)"
-export PYTHONPATH="${WORKSPACE_ROOT}/stubborn/src:${WORKSPACE_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
-if [[ -x "${WORKSPACE_ROOT}/.tooling/venv/bin/python" ]]; then
-  export STUBBORN_CMD="${WORKSPACE_ROOT}/.tooling/venv/bin/python -c 'from stubborn.cli import app; app()'"
-fi
+
+assert_command() {
+  local name="$1"
+  if ! command -v "${name}" >/dev/null 2>&1; then
+    echo "Required command not found on PATH: ${name}" >&2
+    exit 1
+  fi
+}
+
+assert_command python3
+assert_command stubborn
 
 cd "${DEMO_ROOT}"
 exec python3 scripts/verify_multi_repo_workspace.py

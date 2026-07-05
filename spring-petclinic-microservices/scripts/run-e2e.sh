@@ -11,7 +11,6 @@ INDEXES_DIR="${METADATA_DIR}/indexes"
 STUB_OUTPUT_DIR="${EXAMPLE_ROOT}/stub-output"
 DB_PATH="${METADATA_DIR}/petclinic-workspace.db"
 WORKSPACE="petclinic-ms"
-export PYTHONPATH="${REPO_ROOT}/stubborn/src:${REPO_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 SERVICES=(
   "api-gateway:spring-petclinic-api-gateway:api-gateway.scip"

@@ -4,8 +4,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEMO_ROOT="${DEMO_ROOT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
-WORKSPACE_ROOT="$(cd "${DEMO_ROOT}/../.." && pwd)"
-export PYTHONPATH="${WORKSPACE_ROOT}/stubborn/src:${WORKSPACE_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 cd "${DEMO_ROOT}"
 

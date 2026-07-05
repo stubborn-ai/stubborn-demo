@@ -4,14 +4,10 @@ set -euo pipefail
 
 EXAMPLE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "${EXAMPLE_ROOT}/../.." && pwd)"
-export PYTHONPATH="${REPO_ROOT}/stubborn/src:${REPO_ROOT}/stubborn-mcp/src${PYTHONPATH:+:${PYTHONPATH}}"
 
 bank_root="${BANK_ROOT:-}"
-if [[ -z "${bank_root}" ]]; then
-  bank_root="$(cd "${REPO_ROOT}/../../dukesbank/src/j2eetutorial14/examples/bank" 2>/dev/null && pwd || true)"
-fi
 if [[ -z "${bank_root}" || ! -d "${bank_root}" ]]; then
-  echo "Duke's Bank module not found. Clone dukesbank as a sibling of this repo (or set BANK_ROOT)." >&2
+  echo "Set BANK_ROOT to the Duke's Bank bank module directory." >&2
   exit 1
 fi
 

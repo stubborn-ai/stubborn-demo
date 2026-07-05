@@ -30,7 +30,10 @@ Outputs (gitignored locally):
 
 ## Host E2E (bash)
 
-Requires JDK 21+, Maven, scip-java, stubborn on PATH.
+Requires JDK 21+, Maven, `scip-java`, `python3`, and `stubborn` on `PATH`.
+The host script clones the pinned upstream repo into `upstream/` and passes the
+Java source root explicitly to the verifier; it does not rely on sibling source
+trees or a private `PYTHONPATH`.
 
 ```bash
 cd spring-petclinic
