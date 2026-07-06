@@ -45,15 +45,12 @@ jobs:
             exit 1
           fi
           echo "${output}"
-          printf '%s\n' "${output}" | rg -q "Set BANK_ROOT to the Duke's Bank bank module directory."
+          printf '%s\n' "${output}" | grep -q "Set BANK_ROOT to the Duke's Bank bank module directory."
 
       - name: Block hidden fallback patterns in host launchers
         run: |
-          if rg -n \
-            -e 'PYTHONPATH=.*stubborn/src' \
-            -e 'DEFAULT_STUBBORN_CMD = \[sys\.executable' \
-            -e '\.\./\.\./dukesbank/src/j2eetutorial14/examples/bank' \
-            -e 'Path\("/petclinic/src/main/java"\)' \
+          if grep -R -n -E \
+            'PYTHONPATH=.*stubborn/src|DEFAULT_STUBBORN_CMD = \[sys\.executable|\.\./\.\./dukesbank/src/j2eetutorial14/examples/bank|Path\("/petclinic/src/main/java"\)' \
             demo-spring/scripts \
             multi-repo/scripts \
             spring-petclinic/scripts \
@@ -66,4 +63,4 @@ jobs:
           fi
 
       - name: Verify petclinic verifier keeps explicit java root argument
-        run: rg -q --fixed-strings -- '--java-root' scripts/verify_petclinic_context.py
+        run: grep -q -- '--java-root' scripts/verify_petclinic_context.py
