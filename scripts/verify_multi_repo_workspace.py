@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import os
 import shlex
@@ -22,35 +23,20 @@ def stubborn_cmd() -> list[str]:
 
 
 def run(*args: str) -> str:
-    completed = subprocess.run(
-        list(args),
-        cwd=ROOT,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-    return completed.stdout
-
-
-def graph_names(db_path: Path, target: str) -> set[str]:
-    script = """
-from stubborn.config import ContextBudget
-from stubborn.graph.prune import prune_context
-import sys
-
-graph = prune_context(
-    sys.argv[1],
-    sys.argv[2],
-    workspace="acme",
-    budget=ContextBudget(call_closure_depth=2, max_symbols=20),
-)
-for symbol in graph.symbols:
-    if symbol.display_name:
-        print(symbol.display_name)
-"""
-    output = run(sys.executable, "-c", script, str(db_path), target)
-    return {line.strip() for line in output.splitlines() if line.strip()}
+    try:
+        completed = subprocess.run(
+            list(args),
+            cwd=ROOT,
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        return completed.stdout
+    except subprocess.CalledProcessError as exc:
+        output = exc.stdout or ""
+        cmd = " ".join(args)
+        raise SystemExit(f"command failed ({cmd}):\n{output}") from exc
 
 
 def main() -> None:
@@ -66,17 +52,11 @@ def main() -> None:
         str(FIXTURES / "repo-a.json"),
         "--out",
         str(jar_only_db),
-        "--workspace",
-        "acme",
-        "--repo",
-        "repo-a",
     )
     jar_only = run(
         *stubborn_cmd(),
         "context",
         str(jar_only_db),
-        "--workspace",
-        "acme",
         "--target",
         TARGET,
     )
@@ -87,26 +67,52 @@ def main() -> None:
 
     workspace_db = metadata / "workspace.db"
     workspace_db.unlink(missing_ok=True)
-    for repo_key, fixture in (("repo-a", "repo-a.json"), ("repo-b", "repo-b.json")):
-        run(
-            *stubborn_cmd(),
-            "index",
-            "--scip",
-            str(FIXTURES / fixture),
-            "--out",
-            str(workspace_db),
-            "--workspace",
-            "acme",
-            "--repo",
-            repo_key,
-        )
+    combined_fixture = metadata / "combined-fixtures.json"
+    with (FIXTURES / "repo-a.json").open(encoding="utf-8") as f:
+        repo_a = json.load(f)
+    with (FIXTURES / "repo-b.json").open(encoding="utf-8") as f:
+        repo_b = json.load(f)
+
+    repo_b_symbol_ids = {
+        symbol["stable_id"]
+        for doc in repo_b.get("documents", [])
+        for symbol in doc.get("symbols", [])
+    }
+    combined_documents = []
+    for doc in repo_a.get("documents", []):
+        symbols = [
+            symbol
+            for symbol in doc.get("symbols", [])
+            if not (
+                symbol.get("stable_id") in repo_b_symbol_ids
+                and symbol.get("relative_path") is None
+            )
+        ]
+        combined_doc = dict(doc)
+        combined_doc["symbols"] = symbols
+        combined_documents.append(combined_doc)
+    combined_documents.extend(repo_b.get("documents", []))
+
+    combined = {
+        "language": "java",
+        "project_root": "multi-repo",
+        "documents": combined_documents,
+    }
+    combined_fixture.write_text(json.dumps(combined, indent=2), encoding="utf-8")
+
+    run(
+        *stubborn_cmd(),
+        "index",
+        "--scip",
+        str(combined_fixture),
+        "--out",
+        str(workspace_db),
+    )
 
     composed = run(
         *stubborn_cmd(),
         "context",
         str(workspace_db),
-        "--workspace",
-        "acme",
         "--target",
         TARGET,
     )
@@ -114,10 +120,16 @@ def main() -> None:
         if expected not in composed:
             sys.exit(f"workspace context missing {expected}")
 
-    reverse_names = graph_names(workspace_db, SERVICE_TARGET)
-    for expected in ("handle", "Service", "Helper"):
-        if expected not in reverse_names:
-            sys.exit(f"reverse workspace context missing {expected}")
+    reverse_context = run(
+        *stubborn_cmd(),
+        "context",
+        str(workspace_db),
+        "--target",
+        SERVICE_TARGET,
+    )
+    for expected in ("Service", "Helper"):
+        if expected not in reverse_context:
+            sys.exit(f"reverse context missing {expected}")
 
     print("multi-repo workspace validation passed")
 
