@@ -79,3 +79,11 @@ OpenAPI/manifest -> stubborn index-openapi/index-contract -> contract tables -> 
 
 Generated artifacts such as `index.scip`, `metadata/`, Maven `target/`, and
 upstream clones are intentionally gitignored.
+
+## Launcher contracts
+
+Explicit environment variables, CLI flags, Docker service mapping, and CI
+workflows are indexed in the program hub:
+
+- [DEMO-LAUNCHERS.md](https://github.com/stubborn-ai/stubborn-hub/blob/main/docs/DEMO-LAUNCHERS.md)
+- [PETCLINIC-VALIDATION.md](https://github.com/stubborn-ai/stubborn-hub/blob/main/docs/PETCLINIC-VALIDATION.md) (monolith + microservices contract evidence)

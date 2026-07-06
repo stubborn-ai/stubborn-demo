@@ -56,6 +56,7 @@ demos — it encodes the multi-repo contract this verifier depends on.
   environment manager outside the repo tree.
 - Override the CLI with `STUBBORN_CMD` when needed (for example
   `STUBBORN_CMD='python -m stubborn'`).
+- All demo launcher contracts: [DEMO-LAUNCHERS.md](https://github.com/stubborn-ai/stubborn-hub/blob/main/docs/DEMO-LAUNCHERS.md)
 
 ```bash
 ./scripts/run-e2e.sh

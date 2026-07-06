@@ -42,6 +42,15 @@ cd spring-petclinic
 
 Clones to `upstream/` (gitignored).
 
+## Verification
+
+After E2E, `verify_petclinic_context.py` checks neighbor coverage and a ≥70%
+token-savings floor. It requires an explicit `--java-root` (not an environment
+variable). Full contract:
+
+- Hub: [PETCLINIC-VALIDATION.md](https://github.com/stubborn-ai/stubborn-hub/blob/main/docs/PETCLINIC-VALIDATION.md) (monolith section)
+- Case: [cases/vet-controller-context.md](cases/vet-controller-context.md)
+
 ## Cases
 
 | Case | Target | Doc |
@@ -54,7 +63,8 @@ Upstream commit is pinned in [`upstream.pin`](upstream.pin). Bump intentionally 
 
 ## CI
 
-Future CI should run this path with `workflow_dispatch` + a weekly schedule, not on every PR.
+Workflow `.github/workflows/petclinic-e2e.yml` — `workflow_dispatch` + weekly
+schedule (`0 8 * * 0`). Not on every PR (heavier than demo-spring).
 
 ## Related
 
