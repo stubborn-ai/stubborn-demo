@@ -1,0 +1,69 @@
+name: Script Contract Guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  script-contract-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell script syntax
+        run: |
+          bash -n \
+            demo-spring/scripts/run-e2e.sh \
+            demo-spring/scripts/run-merge-e2e.sh \
+            demo-spring/scripts/mcp-smoke.sh \
+            multi-repo/scripts/run-e2e.sh \
+            spring-petclinic/scripts/run-e2e.sh \
+            spring-petclinic-microservices/scripts/run-e2e.sh \
+            spring-petclinic-microservices/scripts/mcp-smoke.sh \
+            dukesbank/scripts/run-e2e.sh \
+            docker/run-e2e.sh \
+            docker/run-petclinic-e2e.sh
+
+      - name: Validate Python helper syntax
+        run: |
+          python3 -m py_compile \
+            scripts/verify_multi_repo_workspace.py \
+            scripts/verify_petclinic_context.py
+
+      - name: Enforce explicit BANK_ROOT contract
+        run: |
+          set +e
+          output="$(bash dukesbank/scripts/run-e2e.sh 2>&1)"
+          status="$?"
+          set -e
+          if [[ "${status}" -eq 0 ]]; then
+            echo "Expected dukesbank/scripts/run-e2e.sh to fail without BANK_ROOT"
+            exit 1
+          fi
+          echo "${output}"
+          printf '%s\n' "${output}" | rg -q "Set BANK_ROOT to the Duke's Bank bank module directory."
+
+      - name: Block hidden fallback patterns in host launchers
+        run: |
+          if rg -n \
+            -e 'PYTHONPATH=.*stubborn/src' \
+            -e 'DEFAULT_STUBBORN_CMD = \[sys\.executable' \
+            -e '\.\./\.\./dukesbank/src/j2eetutorial14/examples/bank' \
+            -e 'Path\("/petclinic/src/main/java"\)' \
+            demo-spring/scripts \
+            multi-repo/scripts \
+            spring-petclinic/scripts \
+            spring-petclinic-microservices/scripts \
+            dukesbank/scripts \
+            scripts/verify_multi_repo_workspace.py \
+            scripts/verify_petclinic_context.py; then
+            echo "Detected hidden fallback/path assumptions."
+            exit 1
+          fi
+
+      - name: Verify petclinic verifier keeps explicit java root argument
+        run: rg -q --fixed-strings -- '--java-root' scripts/verify_petclinic_context.py
