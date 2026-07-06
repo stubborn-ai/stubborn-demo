@@ -31,8 +31,12 @@ jobs:
       - name: Validate Python helper syntax
         run: |
           python3 -m py_compile \
+            scripts/multi_repo_workspace.py \
             scripts/verify_multi_repo_workspace.py \
             scripts/verify_petclinic_context.py
+
+      - name: Validate multi-repo fixture merge logic
+        run: python3 -m unittest discover -s tests -p 'test_multi_repo_workspace.py' -v
 
       - name: Enforce explicit BANK_ROOT contract
         run: |
@@ -57,6 +61,7 @@ jobs:
             spring-petclinic-microservices/scripts \
             dukesbank/scripts \
             scripts/verify_multi_repo_workspace.py \
+            scripts/multi_repo_workspace.py \
             scripts/verify_petclinic_context.py; then
             echo "Detected hidden fallback/path assumptions."
             exit 1

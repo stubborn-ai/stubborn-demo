@@ -1,19 +1,31 @@
-"""Verify multi-repo workspace graph composition through CLI and graph API."""
+"""Black-box verifier for multi-repo graph composition via the stubborn CLI.
+
+Fixture merge rules and expected symbol names live in ``multi_repo_workspace.py``.
+Unit tests in ``tests/test_multi_repo_workspace.py`` lock the merge behavior; this
+script exercises the installed ``stubborn`` CLI end to end.
+"""
 
 from __future__ import annotations
 
 import json
-import subprocess
 import os
 import shlex
+import subprocess
 import sys
 from pathlib import Path
 
+from multi_repo_workspace import (
+    COMPOSED_FORWARD_EXPECTED,
+    COMPOSED_REVERSE_EXPECTED,
+    JAR_ONLY_FORBIDDEN,
+    JAR_ONLY_EXPECTED,
+    SERVICE_TARGET,
+    TARGET,
+    build_combined_fixture,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "multi-repo" / "fixtures"
-TARGET = "semanticdb maven com/example/app/Controller#handle()."
-SERVICE_TARGET = "semanticdb maven com/example/lib/Service#"
 DEFAULT_STUBBORN_CMD = ["stubborn"]
 
 
@@ -39,6 +51,12 @@ def run(*args: str) -> str:
         raise SystemExit(f"command failed ({cmd}):\n{output}") from exc
 
 
+def _assert_symbols_present(output: str, expected: tuple[str, ...], label: str) -> None:
+    missing = [name for name in expected if name not in output]
+    if missing:
+        sys.exit(f"{label} missing {', '.join(missing)}")
+
+
 def main() -> None:
     metadata = ROOT / "multi-repo" / "metadata"
     metadata.mkdir(parents=True, exist_ok=True)
@@ -60,45 +78,22 @@ def main() -> None:
         "--target",
         TARGET,
     )
-    if "Service" not in jar_only:
-        sys.exit("expected signature-level Service leaf in jar-only context")
-    if "Helper" in jar_only:
-        sys.exit("jar-only context unexpectedly expanded into Helper")
+    _assert_symbols_present(jar_only, JAR_ONLY_EXPECTED, "jar-only context")
+    for forbidden in JAR_ONLY_FORBIDDEN:
+        if forbidden in jar_only:
+            sys.exit(f"jar-only context unexpectedly expanded into {forbidden}")
 
     workspace_db = metadata / "workspace.db"
     workspace_db.unlink(missing_ok=True)
     combined_fixture = metadata / "combined-fixtures.json"
-    with (FIXTURES / "repo-a.json").open(encoding="utf-8") as f:
-        repo_a = json.load(f)
-    with (FIXTURES / "repo-b.json").open(encoding="utf-8") as f:
-        repo_b = json.load(f)
-
-    repo_b_symbol_ids = {
-        symbol["stable_id"]
-        for doc in repo_b.get("documents", [])
-        for symbol in doc.get("symbols", [])
-    }
-    combined_documents = []
-    for doc in repo_a.get("documents", []):
-        symbols = [
-            symbol
-            for symbol in doc.get("symbols", [])
-            if not (
-                symbol.get("stable_id") in repo_b_symbol_ids
-                and symbol.get("relative_path") is None
-            )
-        ]
-        combined_doc = dict(doc)
-        combined_doc["symbols"] = symbols
-        combined_documents.append(combined_doc)
-    combined_documents.extend(repo_b.get("documents", []))
-
-    combined = {
-        "language": "java",
-        "project_root": "multi-repo",
-        "documents": combined_documents,
-    }
-    combined_fixture.write_text(json.dumps(combined, indent=2), encoding="utf-8")
+    with (FIXTURES / "repo-a.json").open(encoding="utf-8") as repo_a_file:
+        repo_a = json.load(repo_a_file)
+    with (FIXTURES / "repo-b.json").open(encoding="utf-8") as repo_b_file:
+        repo_b = json.load(repo_b_file)
+    combined_fixture.write_text(
+        json.dumps(build_combined_fixture(repo_a, repo_b), indent=2),
+        encoding="utf-8",
+    )
 
     run(
         *stubborn_cmd(),
@@ -116,9 +111,7 @@ def main() -> None:
         "--target",
         TARGET,
     )
-    for expected in ("Controller", "Service", "Helper"):
-        if expected not in composed:
-            sys.exit(f"workspace context missing {expected}")
+    _assert_symbols_present(composed, COMPOSED_FORWARD_EXPECTED, "workspace context")
 
     reverse_context = run(
         *stubborn_cmd(),
@@ -127,9 +120,7 @@ def main() -> None:
         "--target",
         SERVICE_TARGET,
     )
-    for expected in ("Service", "Helper"):
-        if expected not in reverse_context:
-            sys.exit(f"reverse context missing {expected}")
+    _assert_symbols_present(reverse_context, COMPOSED_REVERSE_EXPECTED, "reverse context")
 
     print("multi-repo workspace validation passed")
 
