@@ -51,8 +51,7 @@ cd ../multi-repo
 Host runs require JDK 21+, Maven, `scip-java`, `python3`, and the installed
 `stubborn-stub` package / `stubborn` CLI in the active environment.
 `mcp-smoke.sh` scripts additionally require `stubborn-mcp` installed.
-Optional preflight: `stubborn-status --json` (install from
-[stubborn-status](https://github.com/stubborn-ai/stubborn-status) repo until PyPI ships).
+Optional preflight: `pip install stubborn-status && stubborn-status --json`.
 They do not create or manage a Python virtual environment; use your own
 `venv`, `uv`, or equivalent if you want isolation.
 Some demos also require explicit roots:
@@ -68,7 +67,7 @@ On Windows, prefer WSL2 for the host path. Treat PowerShell as a fallback launch
 - `stubborn` is the headless core: ingest, store, prune, weave, API, CLI.
 - `stubborn-watch` is dev-loop orchestration: watch, debounce, external indexer, merge.
 - `stubborn-mcp` is the source-neutral agent/MCP surface over a prepared `symbols.db`.
-- `stubborn-status` aggregates federated `doctor --json` for terminal, CI, and IDE bridges (repo `0.1.0b1`; PyPI pending).
+- `stubborn-status` aggregates federated `doctor --json` for terminal, CI, and IDE bridges ([`stubborn-status`](https://pypi.org/project/stubborn-status/) **0.1.0b1**).
 - `stubborn-demo` owns runnable demos and black-box validation projects.
 
 ## Validation Scope
