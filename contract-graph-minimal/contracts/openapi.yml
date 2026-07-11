@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: Customers API
+  version: v1
+paths:
+  /owners/{ownerId}:
+    parameters:
+      - name: ownerId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      operationId: getOwner
+      parameters:
+        - name: includePets
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Owner found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Owner"
+components:
+  schemas:
+    Owner:
+      type: object

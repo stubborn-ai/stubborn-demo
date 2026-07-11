@@ -29,6 +29,13 @@ services:
     volumes:
       - .:/opt/stubborn-demo
 
+  contract-graph-e2e:
+    image: stubborn-demo:e2e
+    entrypoint: ["python3", "/opt/stubborn-demo/scripts/verify_contract_graph_minimal.py"]
+    working_dir: /opt/stubborn-demo
+    volumes:
+      - .:/opt/stubborn-demo
+
   petclinic-e2e:
     image: stubborn-demo:e2e
     entrypoint: ["/bin/bash", "/usr/local/bin/run-petclinic-e2e"]

@@ -1,0 +1,24 @@
+{
+  "language": "java",
+  "project_root": "/customers-service",
+  "documents": [
+    {
+      "relative_path": "src/main/java/com/example/customers/OwnerResource.java",
+      "symbols": [
+        {
+          "stable_id": "semanticdb maven com/example/customers/OwnerResource#",
+          "display_name": "OwnerResource",
+          "kind": "class",
+          "signature": "public class OwnerResource"
+        },
+        {
+          "stable_id": "semanticdb maven com/example/customers/OwnerResource#getOwner().",
+          "display_name": "getOwner",
+          "kind": "method",
+          "signature": "public Response getOwner(Long ownerId)"
+        }
+      ],
+      "edges": []
+    }
+  ]
+}

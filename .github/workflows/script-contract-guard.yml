@@ -21,6 +21,7 @@ jobs:
             demo-spring/scripts/run-merge-e2e.sh \
             demo-spring/scripts/mcp-smoke.sh \
             multi-repo/scripts/run-e2e.sh \
+            contract-graph-minimal/scripts/run-e2e.sh \
             spring-petclinic/scripts/run-e2e.sh \
             spring-petclinic-microservices/scripts/run-e2e.sh \
             spring-petclinic-microservices/scripts/mcp-smoke.sh \
@@ -33,10 +34,14 @@ jobs:
           python3 -m py_compile \
             scripts/multi_repo_workspace.py \
             scripts/verify_multi_repo_workspace.py \
+            scripts/verify_contract_graph_minimal.py \
             scripts/verify_petclinic_context.py
 
       - name: Validate multi-repo fixture merge logic
         run: python3 -m unittest discover -s tests -p 'test_multi_repo_workspace.py' -v
+
+      - name: Validate contract-graph-minimal assets
+        run: python3 -m unittest discover -s tests -p 'test_contract_graph_minimal.py' -v
 
       - name: Enforce explicit BANK_ROOT contract
         run: |

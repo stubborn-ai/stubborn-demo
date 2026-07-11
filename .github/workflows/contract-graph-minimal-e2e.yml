@@ -1,0 +1,33 @@
+name: Contract Graph Minimal E2E
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contract-graph-minimal/**"
+      - "scripts/verify_contract_graph_minimal.py"
+      - ".github/workflows/contract-graph-minimal-e2e.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "contract-graph-minimal/**"
+      - "scripts/verify_contract_graph_minimal.py"
+      - ".github/workflows/contract-graph-minimal-e2e.yml"
+  workflow_dispatch:
+
+jobs:
+  contract-graph-minimal-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install stubborn-stub with OpenAPI extra
+        run: pip install "stubborn-stub[openapi]"
+
+      - name: Run minimal mixed workspace verifier
+        run: python3 scripts/verify_contract_graph_minimal.py

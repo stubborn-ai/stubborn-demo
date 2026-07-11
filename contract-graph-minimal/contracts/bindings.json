@@ -1,0 +1,24 @@
+{
+  "workspace": "contract-minimal",
+  "contract_repo": "contract-manifests",
+  "endpoints": [
+    {
+      "service": "customers-service",
+      "version": "v1",
+      "method": "GET",
+      "path": "/owners/{ownerId}",
+      "providers": [
+        {
+          "repo": "customers-service",
+          "display_name": "OwnerResource"
+        }
+      ],
+      "consumers": [
+        {
+          "repo": "visits-service",
+          "display_name": "CustomersClient"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "language": "java",
+  "project_root": "/visits-service",
+  "documents": [
+    {
+      "relative_path": "src/main/java/com/example/visits/CustomersClient.java",
+      "symbols": [
+        {
+          "stable_id": "semanticdb maven com/example/visits/CustomersClient#",
+          "display_name": "CustomersClient",
+          "kind": "class",
+          "signature": "public interface CustomersClient"
+        },
+        {
+          "stable_id": "semanticdb maven com/example/visits/CustomersClient#getOwner().",
+          "display_name": "getOwner",
+          "kind": "method",
+          "signature": "public Owner getOwner(Long ownerId)"
+        }
+      ],
+      "edges": []
+    }
+  ]
+}
