@@ -2,6 +2,15 @@
 
 Runnable demo and validation projects for Stubborn.
 
+## Try it (30 seconds)
+
+```bash
+pip install stubborn-stub
+stubborn try
+```
+
+Same flow from this repo: `./scripts/try-stubborn.sh` (requires `stubborn` on `PATH`).
+
 This repo is the product-level demo surface for the Stubborn AI program. It keeps
 large or story-driven validation projects out of the headless core repo while
 still exercising the public CLI/API contracts.
