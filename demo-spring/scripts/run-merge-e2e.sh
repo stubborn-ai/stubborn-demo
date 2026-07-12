@@ -4,6 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEMO_ROOT="${DEMO_ROOT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
+STUBBORN_DEMO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 PROBE_RELATIVE_PATH="src/main/java/com/example/orders/service/MergeProbeService.java"
 PROBE_PATH="${DEMO_ROOT}/${PROBE_RELATIVE_PATH}"
 DB_PATH="${DEMO_ROOT}/metadata/symbols.db"
@@ -19,10 +20,12 @@ assert_command() {
   fi
 }
 
+# shellcheck source=/dev/null
+source "${STUBBORN_DEMO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${DEMO_ROOT}" || exit $?
+
 assert_command mvn
 assert_command scip-java
-assert_command stubborn
-assert_command python3
 
 assert_command() {
   local name="$1"

@@ -5,6 +5,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEMO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
+# shellcheck source=/dev/null
+source "${DEMO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${DEMO_ROOT}" || exit $?
+
 assert_command() {
   local name="$1"
   if ! command -v "${name}" >/dev/null 2>&1; then
@@ -14,7 +18,6 @@ assert_command() {
 }
 
 assert_command python3
-assert_command stubborn
 
 cd "${DEMO_ROOT}"
 exec python3 scripts/verify_contract_graph_minimal.py

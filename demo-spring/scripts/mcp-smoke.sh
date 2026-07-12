@@ -3,6 +3,7 @@
 set -euo pipefail
 
 DEMO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+STUBBORN_DEMO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DB_PATH="${DEMO_ROOT}/metadata/symbols.db"
 SOURCES="${DEMO_ROOT}/src/main/java"
 
@@ -11,13 +12,9 @@ if [[ ! -f "${DB_PATH}" ]]; then
   exit 1
 fi
 
-python3 - <<'PY'
-import importlib
-try:
-    importlib.import_module("stubborn_mcp")
-except Exception as exc:
-    raise SystemExit(f"Required Python module not importable: stubborn_mcp ({exc})")
-PY
+# shellcheck source=/dev/null
+source "${STUBBORN_DEMO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${DEMO_ROOT}" "stubborn-stub,stubborn-mcp" || exit $?
 
 export STUBBORN_DB="${DB_PATH}"
 

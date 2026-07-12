@@ -78,7 +78,7 @@ On Windows, prefer WSL2 for the host path. Treat PowerShell as a fallback launch
 - `stubborn` is the headless core: ingest, store, prune, weave, API, CLI.
 - `stubborn-watch` is dev-loop orchestration: watch, debounce, external indexer, merge.
 - `stubborn-mcp` is the source-neutral agent/MCP surface over a prepared `symbols.db`.
-- `stubborn-status` aggregates federated `doctor --json` for terminal, CI, and IDE bridges ([`stubborn-status`](https://pypi.org/project/stubborn-status/) **0.10.0b1**).
+- `stubborn-status` aggregates federated `doctor --json` for terminal, CI, and IDE bridges ([`stubborn-status`](https://pypi.org/project/stubborn-status/) **0.10.0b2**).
 - `stubborn-demo` owns runnable demos and black-box validation projects.
 
 ## Validation Scope

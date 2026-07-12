@@ -5,6 +5,12 @@ set -euo pipefail
 DEMO_ROOT="${DEMO_ROOT:-/demo}"
 cd "${DEMO_ROOT}"
 
+if [[ -f /opt/stubborn-demo/scripts/stubborn-preflight.sh ]]; then
+  # shellcheck source=/dev/null
+  source /opt/stubborn-demo/scripts/stubborn-preflight.sh
+  stubborn_preflight "${DEMO_ROOT}" || exit $?
+fi
+
 echo "== orders-demo E2E (Docker) =="
 
 echo

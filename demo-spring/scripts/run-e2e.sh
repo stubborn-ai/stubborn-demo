@@ -4,6 +4,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEMO_ROOT="${DEMO_ROOT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
+STUBBORN_DEMO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
+# shellcheck source=/dev/null
+source "${STUBBORN_DEMO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${DEMO_ROOT}" || exit $?
 
 cd "${DEMO_ROOT}"
 
@@ -18,8 +23,6 @@ assert_command() {
 echo "== orders-demo E2E =="
 assert_command mvn
 assert_command scip-java
-assert_command stubborn
-assert_command python3
 
 echo
 echo "[1/5] Maven compile..."

@@ -18,6 +18,7 @@ jobs:
         run: |
           bash -n \
             scripts/try-stubborn.sh \
+            scripts/stubborn-preflight.sh \
             demo-spring/scripts/run-e2e.sh \
             demo-spring/scripts/run-merge-e2e.sh \
             demo-spring/scripts/mcp-smoke.sh \

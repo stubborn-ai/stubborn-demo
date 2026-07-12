@@ -22,10 +22,12 @@ assert_command() {
 echo "== Duke's Bank stubborn E2E =="
 echo "Bank module: ${bank_root}"
 
+# shellcheck source=/dev/null
+source "${REPO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${bank_root}" || exit $?
+
 assert_command mvn
 assert_command scip-java
-assert_command stubborn
-assert_command python3
 
 cd "${bank_root}"
 

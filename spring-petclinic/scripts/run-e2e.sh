@@ -32,10 +32,13 @@ commit="$(read_pin_value commit)"
 echo "== spring-petclinic E2E =="
 echo "Pin: ${commit}"
 
+# shellcheck source=/dev/null
+source "${REPO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${EXAMPLE_ROOT}" || exit $?
+
 assert_command git
 assert_command mvn
 assert_command scip-java
-assert_command stubborn
 assert_command python3
 
 if [[ ! -d "${UPSTREAM_ROOT}/.git" ]]; then

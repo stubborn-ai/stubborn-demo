@@ -3,6 +3,7 @@
 set -euo pipefail
 
 EXAMPLE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "${EXAMPLE_ROOT}/../.." && pwd)"
 DB_PATH="${EXAMPLE_ROOT}/metadata/petclinic-workspace.db"
 
 if [[ ! -f "${DB_PATH}" ]]; then
@@ -10,13 +11,9 @@ if [[ ! -f "${DB_PATH}" ]]; then
   exit 1
 fi
 
-python3 - <<'PY'
-import importlib
-try:
-    importlib.import_module("stubborn_mcp")
-except Exception as exc:
-    raise SystemExit(f"Required Python module not importable: stubborn_mcp ({exc})")
-PY
+# shellcheck source=/dev/null
+source "${REPO_ROOT}/scripts/stubborn-preflight.sh"
+stubborn_preflight "${EXAMPLE_ROOT}" "stubborn-stub,stubborn-mcp" || exit $?
 
 export STUBBORN_DB="${DB_PATH}"
 

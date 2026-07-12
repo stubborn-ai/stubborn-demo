@@ -45,6 +45,8 @@ WORKDIR /opt/stubborn-demo
 RUN pip3 install --no-cache-dir --break-system-packages "${STUBBORN_SPEC}" \
     && pip3 install --no-cache-dir --break-system-packages "protobuf>=5,<6"
 
+COPY scripts/stubborn-preflight.sh /opt/stubborn-demo/scripts/stubborn-preflight.sh
+
 COPY docker/run-e2e.sh /usr/local/bin/run-demo-e2e
 RUN sed -i 's/\r$//' /usr/local/bin/run-demo-e2e && chmod +x /usr/local/bin/run-demo-e2e
 
