@@ -11,6 +11,18 @@ stubborn try
 
 Same flow from this repo: `./scripts/try-stubborn.sh` (requires `stubborn` on `PATH`).
 
+## Real Java project (your repo)
+
+```bash
+pip install "stubborn-stub[scip]"
+cd /path/to/your-maven-or-gradle-app
+/path/to/stubborn-demo/scripts/index-java-project.sh --query YourService
+```
+
+Build → SCIP → `metadata/symbols.db` → symbol list and printed next steps (`context`,
+`stubborn-watch`, MCP). Pass `--no-build` to skip build; if `index.scip` exists, scip-java
+is skipped too. See [USER-JOURNEY Journey C](https://github.com/stubborn-ai/stubborn-hub/blob/main/docs/USER-JOURNEY.md#journey-c--real-java--spring-project).
+
 This repo is the product-level demo surface for the Stubborn AI program. It keeps
 large or story-driven validation projects out of the headless core repo while
 still exercising the public CLI/API contracts.
